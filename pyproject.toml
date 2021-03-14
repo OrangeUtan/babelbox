@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "babelbox"
+version = "0.1.0"
+description = "A language localization generator for Minecraft"
+authors = ["Oran9eUtan <Oran9eUtan@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/OrangeUtan/babelbox"
+repository = "https://github.com/OrangeUtan/babelbox"
+keywords = ["minecraft", "lang", "csv", "json", "localization", "translation"]
+include = [
+    "LICENSE"
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+typer = "^0.3.2"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.2"
+hypothesis = "^6.3.4"
+pytest-cov = "^2.11.1"
+coverage-badge = "^1.0.1"
+pre-commit = "^2.10.1"
+mypy = "^0.812"
+black = "^20.8b1"
+isort = "^5.7.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 95
+
+[tool.isort]
+line_length = 95
+
+[tool.coverage.run]
+source = ["babelbox"]
