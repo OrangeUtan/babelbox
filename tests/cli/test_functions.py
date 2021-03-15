@@ -1,23 +1,13 @@
 import unittest
 from pathlib import Path
-from unittest import mock
 from unittest.mock import MagicMock, call, patch
 
 import click
 import pytest
+from typer.testing import CliRunner
 
 import babelbox
 from babelbox import __main__ as cli
-
-
-def mock_mkdir(*args, **kwargs):
-    pass
-
-
-def mock_open(*args, **kwargs):
-    m = unittest.mock.mock_open(*args, **kwargs)
-    m.return_value.seek = m.side_effect  # Fix for seek(0)
-    return m
 
 
 class Test_version_callback:
@@ -72,37 +62,3 @@ class Test_create_locale:
 
                 mockdump.assert_called_once()
                 assert mockdump.call_args[0][0] == expected_data
-
-
-class Test_main:
-    def test(self):
-        expected_call_args_list = [
-            call(
-                Path("tests/cli/res"),
-                "a",
-                {"x": "1", "y": "10", "s": "1", "t": "10", "ä": "1", "ö": "10"},
-                None,
-            ),
-            call(
-                Path("tests/cli/res"),
-                "b",
-                {"x": "2", "y": "11", "s": "2", "t": "11", "ä": "2", "ö": "11"},
-                None,
-            ),
-            call(
-                Path("tests/cli/res"),
-                "c",
-                {"x": "3", "y": "12", "s": "3", "t": "12", "ä": "3", "ö": "12"},
-                None,
-            ),
-        ]
-
-        with patch("babelbox.__main__.write_locale", new=MagicMock()) as mock_write_locale:
-            cli.main("tests/cli/res", None)
-
-            assert mock_write_locale.call_count == 3
-            assert mock_write_locale.call_args_list == expected_call_args_list
-
-    def test_file_not_found(self):
-        with pytest.raises(FileNotFoundError):
-            cli.main("doesnt_exist")

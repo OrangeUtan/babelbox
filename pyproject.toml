@@ -43,8 +43,6 @@ line_length = 95
 [tool.coverage.run]
 source = ["babelbox"]
 
-github_url = "https://github.com/orangeutan/babelbox/"
-
 [tool.tbump.version]
 current = "0.2.0"
 

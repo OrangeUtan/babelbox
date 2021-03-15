@@ -41,27 +41,31 @@ app = typer.Typer()
 
 @app.command()
 def main(
-    src_dir: str,
-    out_dir: Optional[str] = typer.Argument(
-        None, help="The directory in which to generate the language localization files"
+    src_dir: Path = typer.Argument(None, exists=True, file_okay=False, readable=True),
+    out_dir: Optional[Path] = typer.Argument(
+        None,
+        help="The directory in which to generate the language localization files",
+        file_okay=False,
+        writable=True,
     ),
-    indent: str = typer.Option("\t", help="String used to indent json"),
-    no_indent: int = typer.Option(
-        False, help="Don't pretty print json with indentation", is_flag=True, flag_value=True
+    pretty_print: bool = typer.Option(
+        False, "--pretty-print", "-p", help="Wether to pretty print json", is_flag=True
     ),
-    version: Optional[bool] = typer.Option(
-        None, "--version", callback=version_callback, is_eager=True
+    indent: str = typer.Option(
+        "\t", "--indent", "-i", help="String used to indent json", show_default=repr("\t")
+    ),
+    version: bool = typer.Option(
+        None, "--version", "-v", callback=version_callback, is_eager=True
     ),
 ):
-    src_dir_path = Path(src_dir)
-    if not src_dir_path.exists():
-        raise FileNotFoundError(src_dir_path)
-    out_dir_path = Path(out_dir) if out_dir else Path(src_dir_path)
-    out_dir_path.mkdir(parents=True, exist_ok=True)
+    """Create language localization files from csv files"""
 
-    csv_files = get_csv_files_in_dir(src_dir_path)
+    out_dir = out_dir if out_dir else src_dir
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    csv_files = get_csv_files_in_dir(src_dir)
     for locale_name, entries in combine_locales_from_files(csv_files).items():
-        write_locale(out_dir_path, locale_name, entries, None if no_indent else indent)
+        write_locale(out_dir, locale_name, entries, indent if pretty_print else None)
 
 
 if __name__ == "__main__":
