@@ -9,10 +9,12 @@ import typer
 import babelbox
 
 
-def combine_locales_from_files(files):
+def combine_locales_from_files(files, prepend_filename=False):
     locales = defaultdict(dict)
     for f in files:
-        for locale_name, translations in babelbox.load_locales_from_csv(f).items():
+        for locale_name, translations in babelbox.load_locales_from_csv(
+            f, prepend_filename=prepend_filename
+        ).items():
             locales[locale_name].update(translations)
 
     return locales
@@ -41,7 +43,7 @@ app = typer.Typer()
 
 @app.command()
 def main(
-    src_dir: Path = typer.Argument(None, exists=True, file_okay=False, readable=True),
+    src_dir: Path = typer.Argument(..., exists=True, file_okay=False, readable=True),
     out_dir: Optional[Path] = typer.Argument(
         None,
         help="The directory in which to generate the language localization files",
@@ -49,10 +51,17 @@ def main(
         writable=True,
     ),
     pretty_print: bool = typer.Option(
-        False, "--pretty-print", "-p", help="Wether to pretty print json", is_flag=True
+        False, "--pretty-print", "-p", help="Pretty print json", is_flag=True
     ),
     indent: str = typer.Option(
         "\t", "--indent", "-i", help="String used to indent json", show_default=repr("\t")
+    ),
+    prepend_filename: bool = typer.Option(
+        False,
+        "--prepend-filename",
+        "-n",
+        help="Prepend the filename (without extension) to every entry in the first column",
+        is_flag=True,
     ),
     version: bool = typer.Option(
         None, "--version", "-v", callback=version_callback, is_eager=True
@@ -60,11 +69,13 @@ def main(
 ):
     """Create language localization files from csv files"""
 
-    out_dir = out_dir if out_dir else src_dir
+    out_dir = out_dir if out_dir is not None else src_dir
     out_dir.mkdir(parents=True, exist_ok=True)
 
     csv_files = get_csv_files_in_dir(src_dir)
-    for locale_name, entries in combine_locales_from_files(csv_files).items():
+    for locale_name, entries in combine_locales_from_files(
+        csv_files, prepend_filename
+    ).items():
         write_locale(out_dir, locale_name, entries, indent if pretty_print else None)
 
 
