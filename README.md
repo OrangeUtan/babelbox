@@ -78,7 +78,7 @@ Running `babelbox .../lang/ --prefix-filename` creates these two files:
     "item.swords.gold.name": "Gold sword",
 }
 ```
-**.../lang/de_de.json*
+**.../lang/de_de.json**
 ```json
 {
     "item.swords.diamond.name": "Diamantschwert",
