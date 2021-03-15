@@ -15,7 +15,8 @@ Creating translations in CSV gives you an easy overview over any errors or missi
 `pip install bablebox`
 
 ## Usage
-`babelbox <src_dir> [dest_dir]`: Finds all `.csv` files in the source directory and converts them to minecraft language files.
+`babelbox <src_dir> [dest_dir]`<br>
+Finds all `.csv` files in the source directory and generates minecraft language files
 
 # Example
 Lets assume we have two csv files "lang/items.csv" and "lang/blocks.csv":
