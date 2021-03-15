@@ -35,3 +35,8 @@ def test(c, verbose=False, s=False):
 def publish(c):
     os.system("poetry build")
     os.system("poetry publish")
+
+
+@task
+def bump(c, version):
+    os.system(f"poetry run tbump {version}")
