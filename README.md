@@ -16,23 +16,32 @@ Creating translations in CSV gives you an easy overview over any errors or missi
 
 ## Usage
 `babelbox <src_dir> [dest_dir]`<br>
-Finds all `.csv` files in the source directory and generates minecraft language files
+Finds all `.csv` files in the source directory and generates minecraft language files<br>
 
-# Example
-Lets assume we have two csv files "items.csv" and "blocks.csv" in the folder "resourcepack/assets/minecraft/lang":
+Options:
+- `--pretty-print` Pretty print json
+- `--indent` String used to indent json
+- `--prefix-filename` Prefixes all variables with the filename
 
-| String             | en       | de         |
+
+# Examples
+## Basic usage:
+We have these two CSV files containing our translations:
+
+**.../lang/items.csv:**
+| Variable           | en_us    | de_de      |
 | ------------------ | -------- | ---------- |
 | item.stick.name    | stick    | Stock      |
 | item.snowball.name | snowball | Schneeball |
 
-| String             | en      | de      |
+**.../lang/blocks.csv:**
+| Variable           | en_us   | de_de   |
 | ------------------ | ------- | ------- |
 | block.grass.name   | grass   | Gras    |
 | block.diamond.name | diamond | Diamant |
 
-Lets run `babelbox resourcepack/assets/minecraft/lang`<br>
-Babelbox will now create the two language files "en.json" and "de.json" in the folder "resourcepack/assets/minecraft/lang":<br>
+Running `babelbox .../lang/` makes Babelbox parse the CSV files and generate the following language files in the same folder:<br>
+**.../lang/en_us.json:**
 ```json
 {
     "item.stick.name": "stick",
@@ -41,6 +50,7 @@ Babelbox will now create the two language files "en.json" and "de.json" in the f
     "block.diamond.name": "diamond"
 }
 ```
+**.../lang/de_de.json:**
 ```json
 {
     "item.stick.name": "Stock",
@@ -49,3 +59,31 @@ Babelbox will now create the two language files "en.json" and "de.json" in the f
     "block.diamond.name": "Diamant"
 }
 ```
+
+## Shorten variable names:
+We can use the `--prefix-filename` flag to save ourselve some typing. If all variables in a CSV file share a common prefix, we can name the file to that prefix and let Babelbox prepend it.
+
+**.../lang/item.swords.csv**
+| String       | en_us         | de_de          |
+| ------------ | ------------- | -------------- |
+| diamond.name | Diamond Sword | Diamantschwert |
+| gold.name    | Gold sword    | Goldschwert    |
+
+Running `babelbox .../lang/ --prefix-filename` creates these two files:
+
+**.../lang/en_us.json**
+```json
+{
+    "item.swords.diamond.name": "Diamond Sword",
+    "item.swords.gold.name": "Gold sword",
+}
+```
+**.../lang/de_de.json*
+```json
+{
+    "item.swords.diamond.name": "Diamantschwert",
+    "item.swords.gold.name": "Goldschwert",
+}
+```
+
+All variables have been prefixed with `item.swords`.
