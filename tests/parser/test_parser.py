@@ -44,7 +44,7 @@ class Test_load_locales_from_csv:
             "f": {"x": "5", "y": "11"},
             "g": {"x": "6", "y": "12"},
         }
-        locales = babelbox.load_locales_from_csv("tests/res/test_seek.csv")
+        locales = babelbox.load_locales_from_csv("tests/parser/res/test_seek.csv")
         assert locales == expected_locales
 
     @pytest.mark.parametrize(
@@ -100,5 +100,5 @@ class Test_load_locales_from_csv:
     def test_empty_file(self):
         with patch("io.open", mock_open(read_data="")):
             with pytest.warns(UserWarning, match="Couldn't determine csv dialect.*"):
-                with pytest.raises(CSVError, match="Failed to read csv file.*"):
+                with pytest.raises(CSVError, match="Failed to read.*"):
                     babelbox.load_locales_from_csv("test.csv")

@@ -36,7 +36,7 @@ def load_locales_from_csv(file: Union[str, Path], dialect: Optional[csv.Dialect]
             header = next(reader)
         except StopIteration as e:
             raise CSVError(
-                f"Failed to read csv file. Either file is empty or the dialect is wrong: '{repr_dialect(dialect)}'"
+                f"Failed to read '{str(file)}'. Either file is empty or the dialect is wrong: '{repr_dialect(dialect)}'"
             ) from e
 
         id_column_name, locale_names = header[0], header[1:]
