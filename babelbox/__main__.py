@@ -43,7 +43,7 @@ app = typer.Typer()
 
 @app.command()
 def main(
-    src_dir: Path = typer.Argument(None, exists=True, file_okay=False, readable=True),
+    src_dir: Path = typer.Argument(..., exists=True, file_okay=False, readable=True),
     out_dir: Optional[Path] = typer.Argument(
         None,
         help="The directory in which to generate the language localization files",
@@ -69,7 +69,7 @@ def main(
 ):
     """Create language localization files from csv files"""
 
-    out_dir = out_dir if out_dir else src_dir
+    out_dir = out_dir if out_dir is not None else src_dir
     out_dir.mkdir(parents=True, exist_ok=True)
 
     csv_files = get_csv_files_in_dir(src_dir)

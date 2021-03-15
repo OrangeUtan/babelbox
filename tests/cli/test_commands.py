@@ -14,6 +14,9 @@ def runner():
 
 
 class Test_main:
+    def test_no_args(self, runner: CliRunner):
+        assert "Missing argument" in runner.invoke(cli.app).output
+
     def test(self, runner):
         expected_call_args_list = [
             call(
