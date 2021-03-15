@@ -60,7 +60,7 @@ def main(
         False,
         "--prepend-filename",
         "-n",
-        help="Prepend the filename (without extension) to every entry in the first column",
+        help="Prepend variables with the filename (without extension)",
         is_flag=True,
     ),
     version: bool = typer.Option(

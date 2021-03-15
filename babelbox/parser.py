@@ -58,10 +58,10 @@ def create_locales_from_csv(
 ):
     locales: defaultdict[str, dict[str, str]] = defaultdict(dict)
     for row in rows:
-        entry, translations = row[0], row[1:]
+        variable, translations = row[0], row[1:]
         if prepend:
-            entry = f"{prepend}.{entry}"
+            variable = f"{prepend}.{variable}"
         for name, translation in zip(locale_names, translations):
-            locales[name][entry] = translation
+            locales[name][variable] = translation
 
     return locales
