@@ -24,7 +24,8 @@ class Test_get_csv_files_in_dir:
             Path("tests/cli/res/subfolder/c.csv"),
         ]
         files = list(cli.get_csv_files_in_dir(Path("tests/cli/res")))
-        assert files == expected_files
+        assert len(files) == len(expected_files)
+        assert set(files) == set(expected_files)
 
 
 class Test_combine_locales_from_files:
