@@ -19,7 +19,7 @@ Creating translations in CSV gives you an easy overview over any errors or missi
 Finds all `.csv` files in the source directory and generates minecraft language files
 
 # Example
-Lets assume we have two csv files "lang/items.csv" and "lang/blocks.csv":
+Lets assume we have two csv files "items.csv" and "blocks.csv" in the folder "resourcepack/assets/minecraft/lang":
 
 | String             | en       | de         |
 | ------------------ | -------- | ---------- |
@@ -31,7 +31,8 @@ Lets assume we have two csv files "lang/items.csv" and "lang/blocks.csv":
 | block.grass.name   | grass   | Gras    |
 | block.diamond.name | diamond | Diamant |
 
-When we run `babelbox lang` Babelbox will create the two language files "lang/en.json" and "lang/de.json":<br>
+Lets run `babelbox resourcepack/assets/minecraft/lang`<br>
+Babelbox will now create the two language files "en.json" and "de.json" in the folder "resourcepack/assets/minecraft/lang":<br>
 ```json
 {
     "item.stick.name": "stick",
