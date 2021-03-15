@@ -12,6 +12,9 @@ include = [
     "LICENSE"
 ]
 
+[tool.poetry.scripts]
+babelbox = "babelbox.__main__:app"
+
 [tool.poetry.dependencies]
 python = "^3.8"
 typer = "^0.3.2"
