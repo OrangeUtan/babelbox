@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import csv
 import warnings
 from collections import defaultdict
@@ -45,7 +47,7 @@ def load_locales_from_csv(file: Union[str, Path], dialect: Optional[csv.Dialect]
     return locales
 
 
-def create_locales_from_csv(locale_names: list[str], rows: Iterator[List[str]]):
+def create_locales_from_csv(locale_names: List[str], rows: Iterator[List[str]]):
     locales: defaultdict[str, dict[str, str]] = defaultdict(dict)
     for row in rows:
         entry, translations = row[0], row[1:]
