@@ -24,8 +24,9 @@ def format(c):
 
 
 @task
-def test(c):
-    if os.system(f"poetry run pytest --cov={str(SRC_DIR)} --cov-report=xml") == 0:
+def test(c, verbose=False, s=False):
+    flags = " ".join(["-vv" if verbose else "", "-s" if s else ""])
+    if os.system(f"poetry run pytest --cov={str(SRC_DIR)} --cov-report=xml {flags}") == 0:
         os.system("poetry run coverage report")
         os.system("poetry run coverage-badge -o coverage.svg -f")
 
