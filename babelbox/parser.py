@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import os
 import warnings
 from collections import defaultdict
 from pathlib import Path
@@ -15,8 +16,11 @@ def repr_dialect(dialect: csv.Dialect):
     return f"Dialect(delimiter={repr(dialect.delimiter)}, escapechar={repr(dialect.escapechar)}, lineterminator={repr(dialect.lineterminator)}, quoting={repr(dialect.quoting)}, doublequote={repr(dialect.doublequote)}, skipinitialspace={repr(dialect.skipinitialspace)})"
 
 
-def load_locales_from_csv(file: Union[str, Path], dialect: Optional[csv.Dialect] = None):
+def load_locales_from_csv(
+    file: Union[str, Path], dialect: Optional[csv.Dialect] = None, prepend_filename=False
+):
     file = Path(file)
+    prepend = os.path.splitext(file.name)[0]
 
     with file.open("r", encoding="utf-8") as f:
         if dialect is None:
@@ -42,15 +46,21 @@ def load_locales_from_csv(file: Union[str, Path], dialect: Optional[csv.Dialect]
             ) from e
 
         id_column_name, locale_names = header[0], header[1:]
-        locales = create_locales_from_csv(locale_names, reader)
+        locales = create_locales_from_csv(
+            locale_names, reader, prepend if prepend_filename else None
+        )
 
     return locales
 
 
-def create_locales_from_csv(locale_names: List[str], rows: Iterator[List[str]]):
+def create_locales_from_csv(
+    locale_names: List[str], rows: Iterator[List[str]], prepend: Optional[str] = None
+):
     locales: defaultdict[str, dict[str, str]] = defaultdict(dict)
     for row in rows:
         entry, translations = row[0], row[1:]
+        if prepend:
+            entry = f"{prepend}.{entry}"
         for name, translation in zip(locale_names, translations):
             locales[name][entry] = translation
 
