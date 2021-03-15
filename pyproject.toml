@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "babelbox"
-version = "0.1.0"
+version = "0.2.0"
 description = "A language localization generator for Minecraft"
 authors = ["Oran9eUtan <Oran9eUtan@gmail.com>"]
 license = "MIT"
@@ -46,7 +46,7 @@ source = ["babelbox"]
 github_url = "https://github.com/orangeutan/babelbox/"
 
 [tool.tbump.version]
-current = "0.1.0"
+current = "0.2.0"
 
 # Example of a semver regexp.
 # Make sure this matches current_version before
