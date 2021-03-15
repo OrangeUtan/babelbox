@@ -17,10 +17,10 @@ def repr_dialect(dialect: csv.Dialect):
 
 
 def load_locales_from_csv(
-    file: Union[str, Path], dialect: Optional[csv.Dialect] = None, prepend_filename=False
+    file: Union[str, Path], dialect: Optional[csv.Dialect] = None, prefix_filename=False
 ):
     file = Path(file)
-    prepend = os.path.splitext(file.name)[0]
+    prefix = os.path.splitext(file.name)[0]
 
     with file.open("r", encoding="utf-8") as f:
         if dialect is None:
@@ -47,20 +47,20 @@ def load_locales_from_csv(
 
         id_column_name, locale_names = header[0], header[1:]
         locales = create_locales_from_csv(
-            locale_names, reader, prepend if prepend_filename else None
+            locale_names, reader, prefix if prefix_filename else None
         )
 
     return locales
 
 
 def create_locales_from_csv(
-    locale_names: List[str], rows: Iterator[List[str]], prepend: Optional[str] = None
+    locale_names: List[str], rows: Iterator[List[str]], prefix: Optional[str] = None
 ):
     locales: defaultdict[str, dict[str, str]] = defaultdict(dict)
     for row in rows:
         variable, translations = row[0], row[1:]
-        if prepend:
-            variable = f"{prepend}.{variable}"
+        if prefix:
+            variable = f"{prefix}.{variable}"
         for name, translation in zip(locale_names, translations):
             locales[name][variable] = translation
 

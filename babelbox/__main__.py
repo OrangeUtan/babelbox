@@ -9,11 +9,11 @@ import typer
 import babelbox
 
 
-def combine_locales_from_files(files, prepend_filename=False):
+def combine_locales_from_files(files, prefix_filename=False):
     locales = defaultdict(dict)
     for f in files:
         for locale_name, translations in babelbox.load_locales_from_csv(
-            f, prepend_filename=prepend_filename
+            f, prefix_filename=prefix_filename
         ).items():
             locales[locale_name].update(translations)
 
@@ -56,11 +56,11 @@ def main(
     indent: str = typer.Option(
         "\t", "--indent", "-i", help="String used to indent json", show_default=repr("\t")
     ),
-    prepend_filename: bool = typer.Option(
+    prefix_filename: bool = typer.Option(
         False,
-        "--prepend-filename",
+        "--prefix-filename",
         "-n",
-        help="Prepend variables with the filename (without extension)",
+        help="Prefix variables with the filename (without extension)",
         is_flag=True,
     ),
     version: bool = typer.Option(
@@ -73,9 +73,7 @@ def main(
     out_dir.mkdir(parents=True, exist_ok=True)
 
     csv_files = get_csv_files_in_dir(src_dir)
-    for locale_name, entries in combine_locales_from_files(
-        csv_files, prepend_filename
-    ).items():
+    for locale_name, entries in combine_locales_from_files(csv_files, prefix_filename).items():
         write_locale(out_dir, locale_name, entries, indent if pretty_print else None)
 
 

@@ -50,7 +50,7 @@ class Test_main:
         assert str(result.exception) == "2"
         assert "does not exist" in result.output
 
-    def test_prepend_filename(self, runner: CliRunner):
+    def test_prefix_filename(self, runner: CliRunner):
         expected_call_args_list = [
             call(
                 Path("tests/cli/res"),
