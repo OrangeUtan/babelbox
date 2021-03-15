@@ -44,4 +44,5 @@ class Test_main:
 
     def test_file_not_found(self, runner: CliRunner):
         result = runner.invoke(cli.app, "doesnt_exist")
-        assert "Path 'doesnt_exist' does not exist" in result.output
+        assert str(result.exception) == "2"
+        assert "does not exist" in result.output
