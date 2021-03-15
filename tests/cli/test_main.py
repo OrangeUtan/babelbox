@@ -3,8 +3,10 @@ from pathlib import Path
 from unittest import mock
 from unittest.mock import MagicMock, call, patch
 
+import click
 import pytest
 
+import babelbox
 from babelbox import __main__ as cli
 
 
@@ -16,6 +18,12 @@ def mock_open(*args, **kwargs):
     m = unittest.mock.mock_open(*args, **kwargs)
     m.return_value.seek = m.side_effect  # Fix for seek(0)
     return m
+
+
+class Test_version_callback:
+    def test(self):
+        with pytest.raises(click.exceptions.Exit):
+            assert cli.version_callback(True) == f"Babelbox: {babelbox.__version__}"
 
 
 class Test_get_csv_files_in_dir:

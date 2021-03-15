@@ -30,6 +30,12 @@ def write_locale(out_dir: Path, locale: str, entries: dict, indent: Optional[str
         json.dump(entries, f, indent=indent, ensure_ascii=False)
 
 
+def version_callback(value: bool):
+    if value:
+        typer.echo(f"Babelbox: {babelbox.__version__}")
+        raise typer.Exit()
+
+
 app = typer.Typer()
 
 
@@ -42,6 +48,9 @@ def main(
     indent: str = typer.Option("\t", help="String used to indent json"),
     no_indent: int = typer.Option(
         False, help="Don't pretty print json with indentation", is_flag=True, flag_value=True
+    ),
+    version: Optional[bool] = typer.Option(
+        None, "--version", callback=version_callback, is_eager=True
     ),
 ):
     src_dir_path = Path(src_dir)

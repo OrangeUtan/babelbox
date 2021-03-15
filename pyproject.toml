@@ -28,6 +28,7 @@ pre-commit = "^2.10.1"
 mypy = "^0.812"
 black = "^20.8b1"
 isort = "^5.7.0"
+tbump = "^6.3.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -41,3 +42,26 @@ line_length = 95
 
 [tool.coverage.run]
 source = ["babelbox"]
+
+github_url = "https://github.com/orangeutan/babelbox/"
+
+[tool.tbump.version]
+current = "0.1.0"
+
+# Example of a semver regexp.
+# Make sure this matches current_version before
+# using tbump
+regex = '''
+  (?P<major>\d+)
+  \.
+  (?P<minor>\d+)
+  \.
+  (?P<patch>\d+)
+  '''
+
+[tool.tbump.git]
+message_template = "Bump to {new_version}"
+tag_template = "v{new_version}"
+
+[[tool.tbump.file]]
+src = "babelbox/__init__.py"
