@@ -25,7 +25,7 @@ pip install babelbox
 ```
 
 # Usage
-Finds all `.csv` files in the source directory, combines them and then generates minecraft language files for each language<br>
+Finds all `.csv` files in the source directory, combines them and then generates language.json files for each language<br>
 ```
 babelbox <src_dir> [dest_dir]
     -p, --pretty-print      Pretty print json
