@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Iterator, List, Optional, Union, cast
 
 
-class CSVError(Exception):
+class ParserError(Exception):
     pass
 
 
@@ -42,7 +42,7 @@ def load_locales_from_csv(
         try:
             header = next(reader)
         except StopIteration as e:
-            raise CSVError(
+            raise ParserError(
                 f"Failed to read '{str(file)}'. Either file is empty or the dialect is wrong: '{repr_dialect(dialect)}'"
             ) from e
 
@@ -59,8 +59,11 @@ def create_locales_from_csv(
     locale_names: List[str], rows: Iterator[List[str]], prefix: Optional[str] = None
 ):
     locales: defaultdict[str, dict[str, str]] = defaultdict(dict)
-    for row in rows:
+    for i, row in enumerate(rows):
         variable, translations = row[0], row[1:]
+        if not variable:
+            raise ParserError(f"Row {i+2}: Variable cannot be empty")
+
         if prefix:
             variable = f"{prefix}.{variable}"
         for locale, translation in zip(locale_names, translations):
