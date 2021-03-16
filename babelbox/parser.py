@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import logging
 import os
 import warnings
 from collections import defaultdict
@@ -45,6 +46,7 @@ def load_locales_from_csv(
                 f"Failed to read '{str(file)}'. Either file is empty or the dialect is wrong: '{repr_dialect(dialect)}'"
             ) from e
 
+        logging.info(f"Reading locales from '{str(file)}'")
         id_column_name, locale_names = header[0], header[1:]
         locales = create_locales_from_csv(
             locale_names, reader, prefix if prefix_filename else None

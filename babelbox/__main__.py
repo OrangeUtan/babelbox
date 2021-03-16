@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from collections import defaultdict
 from pathlib import Path
@@ -29,6 +30,7 @@ def get_csv_files_in_dir(dir: Path):
 
 def write_locale(out_dir: Path, locale: str, entries: dict, indent: Optional[str] = None):
     with Path(out_dir, f"{locale}.json").open("w", encoding="utf-8") as f:
+        logging.info(f"Creating language file '{f.name}'")
         json.dump(entries, f, indent=indent, ensure_ascii=False)
 
 
@@ -69,8 +71,15 @@ def main(
     dry: bool = typer.Option(
         False, "--dry", help="Dry run. Don't create any files", is_flag=True
     ),
+    verbose: bool = typer.Option(False, "-v", "--verbose", is_flag=True),
 ):
     """Create language localization files from csv files"""
+
+    logging.basicConfig(
+        level=logging.INFO if verbose else logging.WARNING,
+        format="{levelname}: {message}",
+        style="{",
+    )
 
     out_dir = out_dir if out_dir is not None else src_dir
     if not dry:
