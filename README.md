@@ -8,8 +8,8 @@
 ![](https://github.com/orangeutan/babelbox/workflows/test/badge.svg)
 
 # Babelbox
-Babelbox allows you to write your language files in the CSV format and then generate Minecraft language files from them.<br>
-Creating translations in CSV gives you an easy overview over any errors or missing languages.<br>
+Babelbox allows you to write your language files in .csv files and then generate Minecraft language.json files from them.<br>
+Creating translations in CSV gives you an easy overview over any errors or missing translations.<br>
 
 # Table of contents
 - [Installation](#Installation)
