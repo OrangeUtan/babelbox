@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+
+## [1.2.0] - 2021-03-17
 ### Added
 - Added `--dry` option
 - Added `--verbose` option
