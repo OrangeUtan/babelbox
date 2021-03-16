@@ -63,7 +63,10 @@ def create_locales_from_csv(
         variable, translations = row[0], row[1:]
         if prefix:
             variable = f"{prefix}.{variable}"
-        for name, translation in zip(locale_names, translations):
-            locales[name][variable] = translation
+        for locale, translation in zip(locale_names, translations):
+            if not translation:
+                logging.warning(f"Locale '{locale}' has no translation for '{variable}'")
+
+            locales[locale][variable] = translation
 
     return locales

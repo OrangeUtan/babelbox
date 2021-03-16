@@ -1,15 +1,18 @@
 import csv
+import logging
 import unittest.mock
+from typing import Iterator, List, cast
 from unittest.mock import patch
 
 import pytest
+from _pytest.logging import LogCaptureFixture
 
 import babelbox
 from babelbox.parser import CSVError
 
 
-def row(id: str, *columns: str):
-    return (id, *columns)
+def row(variable: str, *columns: str):
+    return (variable, *columns)
 
 
 def mock_open(*args, **kwargs):
@@ -32,6 +35,24 @@ class Test_create_locales_from_csv:
     def test(self, locale_names, rows, expected_locales):
         locales = babelbox.create_locales_from_csv(locale_names, rows)
         assert locales == expected_locales
+
+    def test_missing_translation(self, caplog: LogCaptureFixture):
+        locale_names = ["en", "de"]
+        rows = [row("x", "a", "b"), row("y", "1", "")]
+
+        with caplog.at_level(logging.WARNING):
+            babelbox.create_locales_from_csv(locale_names, iter(rows))
+
+        assert len(caplog.records) == 1
+        assert caplog.record_tuples[0] == (
+            "root",
+            logging.WARNING,
+            "Locale 'de' has no translation for 'y'",
+        )
+
+    def test_no_variable(self):
+        # TODO
+        pass
 
 
 class Test_load_locales_from_csv:
@@ -102,3 +123,19 @@ class Test_load_locales_from_csv:
             with pytest.warns(UserWarning, match="Couldn't determine csv dialect.*"):
                 with pytest.raises(CSVError, match="Failed to read.*"):
                     babelbox.load_locales_from_csv("test.csv")
+
+    def test_missing_translation(self, caplog: LogCaptureFixture):
+        with caplog.at_level(logging.WARNING):
+            babelbox.load_locales_from_csv("tests/parser/res/missing_translations.csv")
+
+        assert len(caplog.records) == 2
+        assert caplog.record_tuples[0] == (
+            "root",
+            logging.WARNING,
+            "Locale 'en_us' has no translation for 'cat'",
+        )
+        assert caplog.record_tuples[1] == (
+            "root",
+            logging.WARNING,
+            "Locale 'es' has no translation for 'spoon'",
+        )

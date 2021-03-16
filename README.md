@@ -32,6 +32,7 @@ babelbox <src_dir> [dest_dir]
     -i, -indent TEXT        String used to indent json
     -n, --prefix-filename   Prefixes all variables with filename
     --dry                   Dry run. Don't create any files
+    -v, --verbose
 ```
 
 # Examples

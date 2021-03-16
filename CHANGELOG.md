@@ -2,7 +2,9 @@
 
 ## [Unreleased]
 ### Added
-- `--dry` option
+- Added `--dry` option
+- Added `--verbose` option
+- Warns if language is missing translation for variable
 
 ## [1.1.0] - 2021-03-15
 ### Added
