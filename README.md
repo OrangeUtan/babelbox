@@ -1,7 +1,7 @@
 ![](https://img.shields.io/github/license/orangeutan/babelbox)
 ![](https://img.shields.io/badge/python-3.8|3.9-blue)
 [![](https://img.shields.io/pypi/v/babelbox)](https://pypi.org/project/babelbox/)
-![](./coverage.svg)
+![](https://raw.githubusercontent.com/OrangeUtan/babelbox/cabe03f93500e0ee2e0bf9f39c03e52007989ecb/coverage.svg)
 ![](https://img.shields.io/badge/mypy-checked-green)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ![](https://img.shields.io/badge/pre--commit-enabled-green)
@@ -11,18 +11,27 @@
 Babelbox allows you to write your language files in the CSV format and then generate Minecraft language files from them.<br>
 Creating translations in CSV gives you an easy overview over any errors or missing languages.<br>
 
-## Install
-`pip install bablebox`
+# Table of contents
+- [Installation](#Installation)
+- [Usage](#Usage)
+- [Examples](#Examples)
+    - [Basic usage](#Basic-usage)
+    - [Shorten variable names](#Shorten-variable-names)
+- [Changelog](#https://github.com/OrangeUtan/babelbox/blob/main/CHANGELOG.md)
 
-## Usage
-`babelbox <src_dir> [dest_dir]`<br>
+# Installation
+```
+pip install bablebox
+```
+
+# Usage
 Finds all `.csv` files in the source directory and generates minecraft language files<br>
-
-Options:
-- `--pretty-print` Pretty print json
-- `--indent` String used to indent json
-- `--prefix-filename` Prefixes all variables with the filename
-
+```
+babelbox <src_dir> [dest_dir]
+    -p, --pretty-print      Pretty print json
+    -i, -indent TEXT        String used to indent json
+    -n, --prefix-filename   Prefixes all variables with filename
+```
 
 # Examples
 ## Basic usage:
@@ -64,7 +73,7 @@ Running `babelbox .../lang/` makes Babelbox parse the CSV files and generate the
 We can use the `--prefix-filename` flag to save ourselve some typing. If all variables in a CSV file share a common prefix, we can name the file to that prefix and let Babelbox prepend it.
 
 **.../lang/item.swords.csv**
-| String       | en_us         | de_de          |
+| Variable     | en_us         | de_de          |
 | ------------ | ------------- | -------------- |
 | diamond.name | Diamond Sword | Diamantschwert |
 | gold.name    | Gold sword    | Goldschwert    |
@@ -86,4 +95,4 @@ Running `babelbox .../lang/ --prefix-filename` creates these two files:
 }
 ```
 
-All variables have been prefixed with `item.swords`.
+All variables have been prefixed with **item.swords**
