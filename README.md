@@ -17,7 +17,7 @@ Creating translations in CSV gives you an easy overview over any errors or missi
 - [Examples](#Examples)
     - [Basic usage](#Basic-usage)
     - [Shorten variable names](#Shorten-variable-names)
-- [Changelog](#https://github.com/OrangeUtan/babelbox/blob/main/CHANGELOG.md)
+- [Changelog](https://github.com/OrangeUtan/babelbox/blob/main/CHANGELOG.md)
 
 # Installation
 ```
