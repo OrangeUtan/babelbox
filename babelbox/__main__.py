@@ -66,15 +66,20 @@ def main(
     version: bool = typer.Option(
         None, "--version", "-v", callback=version_callback, is_eager=True
     ),
+    dry: bool = typer.Option(
+        False, "--dry", help="Dry run. Don't create any files", is_flag=True
+    ),
 ):
     """Create language localization files from csv files"""
 
     out_dir = out_dir if out_dir is not None else src_dir
-    out_dir.mkdir(parents=True, exist_ok=True)
+    if not dry:
+        out_dir.mkdir(parents=True, exist_ok=True)
 
     csv_files = get_csv_files_in_dir(src_dir)
     for locale_name, entries in combine_locales_from_files(csv_files, prefix_filename).items():
-        write_locale(out_dir, locale_name, entries, indent if pretty_print else None)
+        if not dry:
+            write_locale(out_dir, locale_name, entries, indent if pretty_print else None)
 
 
 if __name__ == "__main__":
