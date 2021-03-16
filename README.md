@@ -21,7 +21,7 @@ Creating translations in CSV gives you an easy overview over any errors or missi
 
 # Installation
 ```
-pip install bablebox
+pip install babelbox
 ```
 
 # Usage
