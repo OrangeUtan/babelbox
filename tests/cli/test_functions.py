@@ -1,13 +1,12 @@
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, patch
 
 import click
 import pytest
-from typer.testing import CliRunner
 
 import babelbox
-from babelbox import __main__ as cli
+from babelbox import cli
 
 
 class Test_version_callback:

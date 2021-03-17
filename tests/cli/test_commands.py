@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, call, patch
 import pytest
 from typer.testing import CliRunner
 
-from babelbox import __main__ as cli
+from babelbox import cli
 
 
 @pytest.fixture
@@ -39,7 +39,7 @@ class Test_main:
             ),
         ]
 
-        with patch("babelbox.__main__.write_locale", new=MagicMock()) as mock_write_locale:
+        with patch("babelbox.cli.write_locale", new=MagicMock()) as mock_write_locale:
             runner.invoke(cli.app, "tests/cli/res")
 
             assert mock_write_locale.call_count == 3
@@ -72,7 +72,7 @@ class Test_main:
             ),
         ]
 
-        with patch("babelbox.__main__.write_locale", new=MagicMock()) as mock_write_locale:
+        with patch("babelbox.cli.write_locale", new=MagicMock()) as mock_write_locale:
             runner.invoke(cli.app, "tests/cli/res -n")
 
             assert mock_write_locale.call_count == 3
