@@ -43,3 +43,4 @@ line_length = 95
 
 [tool.coverage.run]
 source = ["babelbox"]
+omit = ["babelbox/__main__.py"]
