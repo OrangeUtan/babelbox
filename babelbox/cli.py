@@ -13,8 +13,10 @@ import babelbox
 def combine_locales_from_files(files, prefix_filename=False):
     locales = defaultdict(dict)
     for f in files:
-        for locale_name, translations in babelbox.load_locales_from_csv(
-            f, prefix_filename=prefix_filename
+        prefix = Path(f).stem + "." if prefix_filename else ""
+
+        for locale_name, translations in babelbox.load_languages_from_csv(
+            f, prefix=prefix
         ).items():
             locales[locale_name].update(translations)
 
@@ -55,9 +57,7 @@ def main(
     pretty_print: bool = typer.Option(
         False, "--pretty-print", "-p", help="Pretty print json", is_flag=True
     ),
-    indent: str = typer.Option(
-        "\t", "--indent", "-i", help="String used to indent json", show_default=repr("\t")
-    ),
+    indent: str = typer.Option("\t", "--indent", "-i", help="String used to indent json"),
     prefix_filename: bool = typer.Option(
         False,
         "--prefix-filename",

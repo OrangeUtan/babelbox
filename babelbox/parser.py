@@ -1,75 +1,59 @@
 from __future__ import annotations
 
+__all__ = ["load_languages_from_csv"]
+
 import csv
 import logging
 import os
-import warnings
 from collections import defaultdict
-from pathlib import Path
-from typing import Iterator, List, Optional, Union, cast
+from typing import Optional, Type, Union
+
+logger = logging.getLogger(__name__)
+
+DialectLike = Union[str, csv.Dialect, Type[csv.Dialect]]
+PathLike = Union[str, bytes, os.PathLike[str], os.PathLike[bytes]]
 
 
-class ParserError(Exception):
-    pass
-
-
-def repr_dialect(dialect: csv.Dialect):
-    return f"Dialect(delimiter={repr(dialect.delimiter)}, escapechar={repr(dialect.escapechar)}, lineterminator={repr(dialect.lineterminator)}, quoting={repr(dialect.quoting)}, doublequote={repr(dialect.doublequote)}, skipinitialspace={repr(dialect.skipinitialspace)})"
-
-
-def load_locales_from_csv(
-    file: Union[str, Path], dialect: Optional[csv.Dialect] = None, prefix_filename=False
+def load_languages_from_csv(
+    path: Union[str, os.PathLike], dialect: Optional[DialectLike] = None, prefix: str = ""
 ):
-    file = Path(file)
-    prefix = os.path.splitext(file.name)[0]
+    """
+    Loads csv file and parses it to a dictionary mapping each column to a language code.
 
-    with file.open("r", encoding="utf-8") as f:
-        if dialect is None:
-            # Try to guess dialect or fall back to excel
+    | Identifier | en_us | de_de |\n
+    | car        | Car   | Auto  |\n
+    | cat        | Cat   | Katze |
+
+    => {"en_us": {"car": "Car", "cat": "Katze"}, "de_de": {"car": "Autor", "cat": "Katze"}}
+    """
+
+    with open(path, newline="", encoding="utf8") as csv_file:
+        if not dialect:
             try:
-                dialect = cast(csv.Dialect, csv.Sniffer().sniff(f.read(1024)))
+                dialect = csv.Sniffer().sniff(csv_file.read(1024))
             except Exception:
-                warnings.warn(
-                    f"Couldn't determine csv dialect of {repr(str(file))}. Falling back to 'excel'",
-                    UserWarning,
-                )
-                dialect = csv.get_dialect("excel")
+                dialect = csv.excel
             finally:
-                f.seek(0)
+                csv_file.seek(0)
 
-        reader = csv.reader(f, dialect=dialect)
+        reader = csv.DictReader(csv_file, dialect=dialect)
+        indentifier_column, *language_codes = reader.fieldnames or [""]
 
-        try:
-            header = next(reader)
-        except StopIteration as e:
-            raise ParserError(
-                f"Failed to read '{str(file)}'. Either file is empty or the dialect is wrong: '{repr_dialect(dialect)}'"
-            ) from e
+        languages: dict[str, dict[str, str]] = defaultdict(dict)
+        for i, row in enumerate(reader):
+            if not (identifier := row[indentifier_column]):
+                if any(row.values()):
+                    logger.warning(f"{path!r}@{i+2}: Non-empty line is missing identifier")
+                continue
 
-        logging.info(f"Reading locales from '{str(file)}'")
-        id_column_name, locale_names = header[0], header[1:]
-        locales = create_locales_from_csv(
-            locale_names, reader, prefix if prefix_filename else None
-        )
+            identifier = prefix + identifier
 
-    return locales
+            for code in language_codes:
+                if translation := row[code]:
+                    languages[code][identifier] = translation
+                else:
+                    logger.warning(
+                        f"{path!r}: Locale {code!r} has no translation for {identifier!r}"
+                    )
 
-
-def create_locales_from_csv(
-    locale_names: List[str], rows: Iterator[List[str]], prefix: Optional[str] = None
-):
-    locales: defaultdict[str, dict[str, str]] = defaultdict(dict)
-    for i, row in enumerate(rows):
-        variable, translations = row[0], row[1:]
-        if not variable:
-            raise ParserError(f"Row {i+2}: Variable cannot be empty")
-
-        if prefix:
-            variable = f"{prefix}.{variable}"
-        for locale, translation in zip(locale_names, translations):
-            if not translation:
-                logging.warning(f"Locale '{locale}' has no translation for '{variable}'")
-
-            locales[locale][variable] = translation
-
-    return locales
+        return languages
