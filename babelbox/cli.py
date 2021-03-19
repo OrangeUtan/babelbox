@@ -29,10 +29,8 @@ def main(
         file_okay=False,
         writable=True,
     ),
-    pretty_print: bool = typer.Option(
-        False, "--pretty-print", "-p", help="Pretty print json", is_flag=True
-    ),
     indent: str = typer.Option("\t", "--indent", "-i", help="String used to indent json"),
+    minify: bool = typer.Option(False, "--minify", "-m", is_flag=True, flag_value=True),
     prefix_filename: bool = typer.Option(
         False,
         "--prefix-filename",
@@ -61,4 +59,4 @@ def main(
         out_dir.mkdir(parents=True, exist_ok=True)
 
     languages = load_languages(src_dir, prefix_filename)
-    write_language_files(out_dir, languages, indent if pretty_print else None)
+    write_language_files(out_dir, languages, indent if not minify else None)
