@@ -22,10 +22,12 @@ app = typer.Typer()
 
 @app.command()
 def main(
-    src_dir: Path = typer.Argument(..., exists=True, file_okay=False, readable=True),
-    out_dir: Optional[Path] = typer.Argument(
+    src: Path = typer.Argument(
+        ..., exists=True, readable=True, help="File or directory containing languages"
+    ),
+    out: Optional[Path] = typer.Argument(
         None,
-        help="The directory in which to generate the language localization files",
+        help="The output directory of the generated files",
         file_okay=False,
         writable=True,
     ),
@@ -58,9 +60,11 @@ def main(
         style="{",
     )
 
-    out_dir = out_dir if out_dir is not None else src_dir
-    languages = load_languages(src_dir, prefix_identifiers)
+    if out is None:
+        out = src if src.is_dir() else src.parent
+
+    languages = load_languages(src, prefix_identifiers)
 
     if not dry:
-        out_dir.mkdir(parents=True, exist_ok=True)
-        write_language_files(out_dir, languages, indent if not minify else None)
+        out.mkdir(parents=True, exist_ok=True)
+        write_language_files(out, languages, indent if not minify else None)

@@ -71,6 +71,18 @@ class Test_main:
             assert mock_write_lang_files.call_args_list[1][0][0] == Path(src)
             assert mock_write_lang_files.call_args_list[1][0][1] == expected_prefixed
 
+    def test_src_is_file(self, runner: CliRunner):
+        with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:
+            runner.invoke(cli.app, "tests/cli/test_dirs/tree/a.csv", catch_exceptions=False)
+
+            assert mock_write.call_count == 1
+            assert mock_write.call_args_list[0][0][0] == Path("tests/cli/test_dirs/tree")
+            assert mock_write.call_args_list[0][0][1] == {
+                "a": {"x": "1", "y": "10"},
+                "b": {"x": "2", "y": "11"},
+                "c": {"x": "3", "y": "12"},
+            }
+
     def test_dry(self, runner: CliRunner):
         with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:
             with patch("pathlib.Path.mkdir", new=MagicMock()) as mock_mkdir:

@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from . import utils
+
 __all__ = ["load_languages", "load_languages_from_csv", "write_language_files"]
 
 import csv
@@ -29,27 +31,30 @@ def write_language_files(
             json.dump(translations, f, indent=indent, ensure_ascii=False)
 
 
-def load_languages(path: Union[str, os.PathLike], prefix_identifiers=False):
+def load_languages(src: Union[str, os.PathLike], prefix_identifiers=False):
     """ Loads languages from directory """
 
-    root = Path(path)
+    src = Path(src)
+
+    if src.is_dir():
+        files = list(utils.files_in_dir(src))
+    else:
+        # Source is a file. Only load languages from that file
+        files = [src]
+        src = src.parent
 
     languages: dict[str, dict[str, str]] = defaultdict(dict)
-    if root.is_dir():
-        for dirpath, _, filenames in os.walk(root):
-            for f in [Path(dirpath, f) for f in filenames]:
-                if prefix_identifiers:
-                    parts = list(f.relative_to(root).parts)
-                    parts[-1] = parts[-1].removesuffix(f.suffix)
-                    prefix = ".".join(parts) + "."
-                else:
-                    prefix = ""
+    for f in files:
+        if prefix_identifiers:
+            parts = list(f.relative_to(src).parts)
+            parts[-1] = parts[-1].removesuffix(f.suffix)
+            prefix = ".".join(parts) + "."
+        else:
+            prefix = ""
 
-                if f.suffix == ".csv":
-                    for lang_code, translations in load_languages_from_csv(
-                        f, None, prefix
-                    ).items():
-                        languages[lang_code].update(translations)
+        if f.suffix == ".csv":
+            for lang_code, translations in load_languages_from_csv(f, None, prefix).items():
+                languages[lang_code].update(translations)
 
     return languages
 
