@@ -71,6 +71,16 @@ class Test_main:
             assert mock_write_lang_files.call_args_list[1][0][0] == Path(src)
             assert mock_write_lang_files.call_args_list[1][0][1] == expected_prefixed
 
+    def test_dry(self, runner: CliRunner):
+        with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:
+            with patch("pathlib.Path.mkdir", new=MagicMock()) as mock_mkdir:
+                runner.invoke(
+                    cli.app, ["tests/cli/test_dirs", "--dry"], catch_exceptions=False
+                )
+
+                mock_write.assert_not_called()
+                mock_mkdir.assert_not_called()
+
 
 class Test_version_callback:
     def test(self):
