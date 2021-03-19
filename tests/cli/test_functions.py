@@ -15,36 +15,6 @@ class Test_version_callback:
             assert cli.version_callback(True) == f"Babelbox: {babelbox.__version__}"
 
 
-class Test_get_csv_files_in_dir:
-    def test(self):
-        expected_files = [
-            Path("tests/cli/res/a.csv"),
-            Path("tests/cli/res/b.csv"),
-            Path("tests/cli/res/subfolder/c.csv"),
-        ]
-        files = list(cli.get_csv_files_in_dir(Path("tests/cli/res")))
-        assert len(files) == len(expected_files)
-        assert set(files) == set(expected_files)
-
-
-class Test_combine_locales_from_files:
-    def test(self):
-        expected_locales = {
-            "a": {"x": "1", "y": "10", "s": "1", "t": "10", "ä": "1", "ö": "10"},
-            "b": {"x": "2", "y": "11", "s": "2", "t": "11", "ä": "2", "ö": "11"},
-            "c": {"x": "3", "y": "12", "s": "3", "t": "12", "ä": "3", "ö": "12"},
-        }
-
-        csv_files = [
-            Path("tests/cli/res/a.csv"),
-            Path("tests/cli/res/b.csv"),
-            Path("tests/cli/res/subfolder/c.csv"),
-        ]
-        locales = cli.combine_locales_from_files(csv_files)
-
-        assert locales == expected_locales
-
-
 class Test_create_locale:
     def test(self):
         expected_locale_path = Path("tests/cli/res/en.json")

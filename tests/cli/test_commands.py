@@ -22,19 +22,19 @@ class Test_main:
             call(
                 Path("tests/cli/res"),
                 "a",
-                {"x": "1", "y": "10", "s": "1", "t": "10", "ä": "1", "ö": "10"},
+                {"x": "1", "y": "10", "s": "1", "t": "10"},
                 None,
             ),
             call(
                 Path("tests/cli/res"),
                 "b",
-                {"x": "2", "y": "11", "s": "2", "t": "11", "ä": "2", "ö": "11"},
+                {"x": "2", "y": "11", "s": "2", "t": "11"},
                 None,
             ),
             call(
                 Path("tests/cli/res"),
                 "c",
-                {"x": "3", "y": "12", "s": "3", "t": "12", "ä": "3", "ö": "12"},
+                {"x": "3", "y": "12", "s": "3", "t": "12"},
                 None,
             ),
         ]
@@ -55,25 +55,27 @@ class Test_main:
             call(
                 Path("tests/cli/res"),
                 "a",
-                {"a.x": "1", "a.y": "10", "b.s": "1", "b.t": "10", "c.ä": "1", "c.ö": "10"},
+                {"a.x": "1", "a.y": "10", "b.s": "1", "b.t": "10"},
                 None,
             ),
             call(
                 Path("tests/cli/res"),
                 "b",
-                {"a.x": "2", "a.y": "11", "b.s": "2", "b.t": "11", "c.ä": "2", "c.ö": "11"},
+                {"a.x": "2", "a.y": "11", "b.s": "2", "b.t": "11"},
                 None,
             ),
             call(
                 Path("tests/cli/res"),
                 "c",
-                {"a.x": "3", "a.y": "12", "b.s": "3", "b.t": "12", "c.ä": "3", "c.ö": "12"},
+                {"a.x": "3", "a.y": "12", "b.s": "3", "b.t": "12"},
                 None,
             ),
         ]
 
         with patch("babelbox.cli.write_locale", new=MagicMock()) as mock_write_locale:
-            runner.invoke(cli.app, "tests/cli/res -n")
+            results = runner.invoke(cli.app, "tests/cli/res -n", catch_exceptions=False)
+
+            print(results.stdout)
 
             assert mock_write_locale.call_count == 3
             assert mock_write_locale.call_args_list == expected_call_args_list

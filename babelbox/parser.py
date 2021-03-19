@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-__all__ = ["load_languages_from_csv"]
+from pathlib import Path
+
+__all__ = ["load_languages", "load_languages_from_csv"]
 
 import csv
 import logging
@@ -11,7 +13,24 @@ from typing import Optional, Type, Union
 logger = logging.getLogger(__name__)
 
 DialectLike = Union[str, csv.Dialect, Type[csv.Dialect]]
-PathLike = Union[str, bytes, os.PathLike[str], os.PathLike[bytes]]
+
+
+def load_languages(path: Union[str, os.PathLike], prefix_filename: bool = False):
+    """ Loads languages from directory """
+
+    p = Path(path)
+
+    languages: dict[str, dict[str, str]] = defaultdict(dict)
+    if p.is_dir():
+        for f in p.iterdir():
+            if f.suffix == ".csv":
+                prefix = f.stem + "." if prefix_filename else ""
+                for lang_code, translations in load_languages_from_csv(
+                    f, None, prefix
+                ).items():
+                    languages[lang_code].update(translations)
+
+    return languages
 
 
 def load_languages_from_csv(

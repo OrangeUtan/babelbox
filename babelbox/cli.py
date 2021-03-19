@@ -8,26 +8,7 @@ from typing import Optional
 import typer
 
 import babelbox
-
-
-def combine_locales_from_files(files, prefix_filename=False):
-    locales = defaultdict(dict)
-    for f in files:
-        prefix = Path(f).stem + "." if prefix_filename else ""
-
-        for locale_name, translations in babelbox.load_languages_from_csv(
-            f, prefix=prefix
-        ).items():
-            locales[locale_name].update(translations)
-
-    return locales
-
-
-def get_csv_files_in_dir(dir: Path):
-    for entry in os.walk(dir):
-        files = map(lambda f: Path(entry[0], f), entry[2])
-        csv_files = filter(lambda f: f.name.endswith(".csv"), files)
-        yield from csv_files
+from babelbox.parser import load_languages
 
 
 def write_locale(out_dir: Path, locale: str, entries: dict, indent: Optional[str] = None):
@@ -85,7 +66,8 @@ def main(
     if not dry:
         out_dir.mkdir(parents=True, exist_ok=True)
 
-    csv_files = get_csv_files_in_dir(src_dir)
-    for locale_name, entries in combine_locales_from_files(csv_files, prefix_filename).items():
+    for language_code, translations in load_languages(src_dir, prefix_filename).items():
         if not dry:
-            write_locale(out_dir, locale_name, entries, indent if pretty_print else None)
+            write_locale(
+                out_dir, language_code, translations, indent if pretty_print else None
+            )
