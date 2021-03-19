@@ -9,6 +9,7 @@ import csv
 import logging
 import os
 from collections import defaultdict
+from enum import Enum
 from typing import Optional, Type, Union
 
 logger = logging.getLogger("babelbox")
@@ -28,20 +29,27 @@ def write_language_files(
             json.dump(translations, f, indent=indent, ensure_ascii=False)
 
 
-def load_languages(path: Union[str, os.PathLike], prefix_filename: bool = False):
+def load_languages(path: Union[str, os.PathLike], prefix_identifiers=False):
     """ Loads languages from directory """
 
-    p = Path(path)
+    root = Path(path)
 
     languages: dict[str, dict[str, str]] = defaultdict(dict)
-    if p.is_dir():
-        for f in p.iterdir():
-            if f.suffix == ".csv":
-                prefix = f.stem + "." if prefix_filename else ""
-                for lang_code, translations in load_languages_from_csv(
-                    f, None, prefix
-                ).items():
-                    languages[lang_code].update(translations)
+    if root.is_dir():
+        for dirpath, _, filenames in os.walk(root):
+            for f in [Path(dirpath, f) for f in filenames]:
+                if prefix_identifiers:
+                    parts = list(f.relative_to(root).parts)
+                    parts[-1] = parts[-1].removesuffix(f.suffix)
+                    prefix = ".".join(parts) + "."
+                else:
+                    prefix = ""
+
+                if f.suffix == ".csv":
+                    for lang_code, translations in load_languages_from_csv(
+                        f, None, prefix
+                    ).items():
+                        languages[lang_code].update(translations)
 
     return languages
 

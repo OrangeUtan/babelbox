@@ -31,12 +31,8 @@ def main(
     ),
     indent: str = typer.Option("\t", "--indent", "-i", help="String used to indent json"),
     minify: bool = typer.Option(False, "--minify", "-m", is_flag=True, flag_value=True),
-    prefix_filename: bool = typer.Option(
-        False,
-        "--prefix-filename",
-        "-n",
-        help="Prefix variables with the filename (without extension)",
-        is_flag=True,
+    prefix_identifiers: bool = typer.Option(
+        False, "--prefix-identifiers", "-p", help="Prefix identifiers", is_flag=True
     ),
     version: bool = typer.Option(
         None, "--version", "-v", callback=version_callback, is_eager=True
@@ -58,5 +54,5 @@ def main(
     if not dry:
         out_dir.mkdir(parents=True, exist_ok=True)
 
-    languages = load_languages(src_dir, prefix_filename)
+    languages = load_languages(src_dir, prefix_identifiers)
     write_language_files(out_dir, languages, indent if not minify else None)
