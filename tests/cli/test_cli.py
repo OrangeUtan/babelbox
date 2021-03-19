@@ -59,7 +59,7 @@ class Test_main:
             "babelbox.cli.write_language_files", new=MagicMock()
         ) as mock_write_lang_files:
             runner.invoke(cli.app, src, catch_exceptions=False)
-            runner.invoke(cli.app, [src, "-n"], catch_exceptions=False)
+            runner.invoke(cli.app, [src, "-p"], catch_exceptions=False)
 
             assert mock_write_lang_files.call_count == 2
 

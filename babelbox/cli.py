@@ -35,7 +35,7 @@ def main(
         False, "--prefix-identifiers", "-p", help="Prefix identifiers", is_flag=True
     ),
     version: bool = typer.Option(
-        None, "--version", "-v", callback=version_callback, is_eager=True
+        None, "--version", callback=version_callback, is_eager=True
     ),
     dry: bool = typer.Option(
         False, "--dry", help="Dry run. Don't create any files", is_flag=True
@@ -51,8 +51,8 @@ def main(
     )
 
     out_dir = out_dir if out_dir is not None else src_dir
+    languages = load_languages(src_dir, prefix_identifiers)
+
     if not dry:
         out_dir.mkdir(parents=True, exist_ok=True)
-
-    languages = load_languages(src_dir, prefix_identifiers)
-    write_language_files(out_dir, languages, indent if not minify else None)
+        write_language_files(out_dir, languages, indent if not minify else None)
