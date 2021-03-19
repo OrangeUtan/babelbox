@@ -25,8 +25,9 @@ def main(
     src: Path = typer.Argument(
         ..., exists=True, readable=True, help="File or directory containing languages"
     ),
-    out: Optional[Path] = typer.Argument(
+    out: Optional[Path] = typer.Option(
         None,
+        "-o",
         help="The output directory of the generated files",
         file_okay=False,
         writable=True,
