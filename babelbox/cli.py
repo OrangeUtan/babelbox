@@ -6,15 +6,9 @@ from typing import Optional
 import typer
 
 import babelbox
-from babelbox.parser import load_languages
+from babelbox.parser import load_languages, write_language_files
 
 logger = logging.getLogger("babelbox")
-
-
-def write_locale(out_dir: Path, locale: str, entries: dict, indent: Optional[str] = None):
-    with Path(out_dir, f"{locale}.json").open("w", encoding="utf-8") as f:
-        logging.info(f"Creating language file '{f.name}'")
-        json.dump(entries, f, indent=indent, ensure_ascii=False)
 
 
 def version_callback(value: bool):
@@ -66,8 +60,5 @@ def main(
     if not dry:
         out_dir.mkdir(parents=True, exist_ok=True)
 
-    for language_code, translations in load_languages(src_dir, prefix_filename).items():
-        if not dry:
-            write_locale(
-                out_dir, language_code, translations, indent if pretty_print else None
-            )
+    languages = load_languages(src_dir, prefix_filename)
+    write_language_files(out_dir, languages, indent if pretty_print else None)

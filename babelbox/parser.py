@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
-__all__ = ["load_languages", "load_languages_from_csv"]
+__all__ = ["load_languages", "load_languages_from_csv", "write_language_files"]
 
 import csv
 import logging
@@ -13,6 +14,18 @@ from typing import Optional, Type, Union
 logger = logging.getLogger("babelbox")
 
 DialectLike = Union[str, csv.Dialect, Type[csv.Dialect]]
+
+
+def write_language_files(
+    dest_dir: Union[str, os.PathLike],
+    languages: dict[str, dict[str, str]],
+    indent: Optional[str] = None,
+):
+    for language_code, translations in languages.items():
+        path = Path(dest_dir, language_code + ".json")
+        logging.info(f"Writing language file {path!r}")
+        with open(path, "w", encoding="utf8") as f:
+            json.dump(translations, f, indent=indent, ensure_ascii=False)
 
 
 def load_languages(path: Union[str, os.PathLike], prefix_filename: bool = False):
