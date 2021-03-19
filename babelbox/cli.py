@@ -29,18 +29,26 @@ def main(
         file_okay=False,
         writable=True,
     ),
-    indent: str = typer.Option("\t", "--indent", "-i", help="String used to indent json"),
-    minify: bool = typer.Option(False, "--minify", "-m", is_flag=True, flag_value=True),
-    prefix_identifiers: bool = typer.Option(
-        False, "--prefix-identifiers", "-p", help="Prefix identifiers", is_flag=True
+    indent: str = typer.Option(
+        "\t", "--indent", "-i", help="Indentation used when generating files"
     ),
-    version: bool = typer.Option(
-        None, "--version", callback=version_callback, is_eager=True
+    minify: bool = typer.Option(
+        False, "--minify", "-m", is_flag=True, flag_value=True, help="Minify generated files"
+    ),
+    prefix_identifiers: bool = typer.Option(
+        False,
+        "--prefix-identifiers",
+        "-p",
+        is_flag=True,
+        help="Prefix identifiers with their path relative to SRC",
     ),
     dry: bool = typer.Option(
-        False, "--dry", help="Dry run. Don't create any files", is_flag=True
+        False, "--dry", help="Dry run. Don't generate any files", is_flag=True
     ),
-    verbose: bool = typer.Option(False, "-v", "--verbose", is_flag=True),
+    verbose: bool = typer.Option(
+        False, "-v", "--verbose", is_flag=True, help="Increase verbosity"
+    ),
+    version: bool = typer.Option(None, "--version", callback=version_callback, is_eager=True),
 ):
     """Create language localization files from csv files"""
 
