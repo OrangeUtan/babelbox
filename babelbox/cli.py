@@ -1,7 +1,5 @@
 import json
 import logging
-import os
-from collections import defaultdict
 from pathlib import Path
 from typing import Optional
 
@@ -9,6 +7,8 @@ import typer
 
 import babelbox
 from babelbox.parser import load_languages
+
+logger = logging.getLogger("babelbox")
 
 
 def write_locale(out_dir: Path, locale: str, entries: dict, indent: Optional[str] = None):

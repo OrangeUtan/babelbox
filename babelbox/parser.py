@@ -10,7 +10,7 @@ import os
 from collections import defaultdict
 from typing import Optional, Type, Union
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("babelbox")
 
 DialectLike = Union[str, csv.Dialect, Type[csv.Dialect]]
 
