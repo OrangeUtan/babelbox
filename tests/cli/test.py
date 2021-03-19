@@ -1,10 +1,12 @@
 import re
 from pathlib import Path
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, patch
 
+import click
 import pytest
 from typer.testing import CliRunner
 
+import babelbox
 from babelbox import cli
 
 
@@ -48,3 +50,9 @@ class Test_main:
                 "b": {"a.x": "2", "a.y": "11", "b.s": "2", "b.t": "11"},
                 "c": {"a.x": "3", "a.y": "12", "b.s": "3", "b.t": "12"},
             }
+
+
+class Test_version_callback:
+    def test(self):
+        with pytest.raises(click.exceptions.Exit):
+            assert cli.version_callback(True) == f"Babelbox: {babelbox.__version__}"
