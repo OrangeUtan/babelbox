@@ -14,7 +14,7 @@ Creating translations in CSV gives you an easy overview over any errors or missi
 # Table of contents
 - [Installation](#Installation)
 - [Usage](#Usage)
-- [Examples](#Examples)
+- [Getting started](#Getting-started)
     - [Single file source](#Single-file-source)
     - [Directory source](#Directory-source)
     - [Shorten variable names](#Shorten-variable-names)
@@ -53,7 +53,7 @@ $ babelbox SOURCES...
 ```
 
 
-# Examples
+# Getting started
 ## Single file source:
 We have one `.csv` file containing translations:
 ```
