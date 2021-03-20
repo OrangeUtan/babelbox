@@ -227,3 +227,20 @@ resourcepack
   ├╴ en_us.json
   └╴ de_de.json
 ```
+
+# Contriubution
+Contributions are welcome. Make sure to first open an issue discussing the problem or the new feature before creating a pull request. The project uses [`poetry`](https://python-poetry.org/). Setup automatically with [`invoke`](http://www.pyinvoke.org/) or manualy with poetry:
+```shell
+$ # Either
+$ invoke install
+$ # or
+$ poetry install
+```
+You can run test with pytest:
+```shell
+$ poetry run pytest
+```
+The project follows [`black`](https://github.com/psf/black) codestyle. Import statements are sorted with [`isort`](https://pycqa.github.io/isort/). Code formatting and type checking is enforced using [`pre-commit`](https://pre-commit.com/).
+```shell
+$ pre-commit install
+```
