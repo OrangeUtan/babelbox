@@ -1,6 +1,17 @@
 # Changelog
 
 ## [Unreleased]
+### Feature
+- `--quiet` flag
+- Source can now be file or directory
+- Accepts multiple sources
+- Improved logging configurability
+
+### Breaking
+- Changed output dir to `--out`/`-o` option
+- Renamed `--pretty-print`/`-p` to `--minify`/`-m`
+- Renamed `--prefix-filename`/`-n` to `--prefix-identifiers`/`-p`
+- Prefix now prefixes relative path to source
 
 ## [1.2.0] - 2021-03-17
 ### Added
