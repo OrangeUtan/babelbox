@@ -104,11 +104,12 @@ def load_languages_from_csv(
             identifier = prefix + identifier
 
             for code in language_codes:
-                if translation := row[code]:
-                    languages[code][identifier] = translation
-                else:
+                if not (translation := row[code]):
                     logger.warning(
                         f"{path!r}: Locale {code!r} has no translation for {identifier!r}"
                     )
+                    translation = ""
+
+                languages[code][identifier] = translation
 
         return languages

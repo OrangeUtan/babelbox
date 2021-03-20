@@ -135,7 +135,7 @@ class Test_parsing:
                 """,a,b
                 x,1,2
                 y,3""",
-                {"a": {"x": "1", "y": "3"}, "b": {"x": "2"}},
+                {"a": {"x": "1", "y": "3"}, "b": {"x": "2", "y": ""}},
             )
         ],
     )
@@ -306,7 +306,10 @@ class Test_load_file:
             languages = babelbox.load_languages_from_csv(
                 "tests/parser/res/missing_translations.csv"
             )
-            assert languages == {"en_us": {"cat": "Cat"}, "de_de": {"spoon": "Löffel"}}
+            assert languages == {
+                "en_us": {"cat": "Cat", "spoon": ""},
+                "de_de": {"cat": "", "spoon": "Löffel"},
+            }
 
             assert len(caplog.records) == 2
             for name, level, msg in caplog.record_tuples:
