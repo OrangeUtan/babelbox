@@ -1,12 +1,13 @@
 import json
 import logging
+from collections import defaultdict
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import typer
 
 import babelbox
-from babelbox.parser import load_languages, write_language_files
+from babelbox.parser import load_languages, merge_languages, write_language_files
 
 logger = logging.getLogger("babelbox")
 
@@ -22,7 +23,7 @@ app = typer.Typer()
 
 @app.command()
 def main(
-    src: Path = typer.Argument(
+    sources: List[Path] = typer.Argument(
         ..., exists=True, readable=True, help="File or directory containing languages"
     ),
     out: Optional[Path] = typer.Option(
@@ -62,9 +63,17 @@ def main(
     )
 
     if out is None:
-        out = src if src.is_dir() else src.parent
+        if len(sources) == 1:
+            out = sources[0] if sources[0].is_dir() else sources[0].parent
+        else:
+            typer.secho(
+                "Multiple sources but no output specified", err=True, fg=typer.colors.RED
+            )
+            raise typer.Exit(code=1)
 
-    languages = load_languages(src, prefix_identifiers)
+    languages: dict[str, dict[str, str]] = defaultdict(dict)
+    for src in sources:
+        languages = merge_languages(languages, load_languages(src, prefix_identifiers))
 
     if not dry:
         out.mkdir(parents=True, exist_ok=True)

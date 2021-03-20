@@ -93,6 +93,42 @@ class Test_main:
                 mock_write.assert_not_called()
                 mock_mkdir.assert_not_called()
 
+    def test_multiple_sources(self, runner: CliRunner):
+        with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:
+            with patch("pathlib.Path.mkdir", new=MagicMock()) as mock_mkdir:
+                args = [
+                    "tests/cli/test_dirs/multiple_sources/a.csv",
+                    "tests/cli/test_dirs/multiple_sources/sourcedir",
+                    "-o",
+                    "build",
+                ]
+                runner.invoke(cli.app, args, catch_exceptions=False)
+
+                mock_mkdir.assert_called_once()
+
+                assert mock_write.call_count == 1
+                assert mock_write.call_args_list[0][0][0] == Path("build")
+                assert mock_write.call_args_list[0][0][1] == {
+                    "a": {"x": "1", "y": "10"},
+                    "b": {"x": "1", "y": "10"},
+                    "c": {"x": "1", "y": "10"},
+                }
+
+    def test_multiple_sources_no_out(self, runner: CliRunner):
+        with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:
+            with patch("pathlib.Path.mkdir", new=MagicMock()) as mock_mkdir:
+                args = [
+                    "tests/cli/test_dirs/multiple_sources/a.csv",
+                    "tests/cli/test_dirs/multiple_sources/sourcedir",
+                ]
+                results = runner.invoke(cli.app, args, catch_exceptions=False)
+
+                mock_mkdir.assert_not_called()
+                mock_write.assert_not_called()
+
+                assert results.exit_code == 1
+                assert results.stdout == "Multiple sources but no output specified\n"
+
 
 class Test_version_callback:
     def test(self):

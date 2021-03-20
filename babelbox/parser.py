@@ -8,6 +8,7 @@ from . import utils
 __all__ = ["load_languages", "load_languages_from_csv", "write_language_files"]
 
 import csv
+import itertools
 import logging
 import os
 from collections import defaultdict
@@ -53,8 +54,16 @@ def load_languages(src: Union[str, os.PathLike], prefix_identifiers=False):
             prefix = ""
 
         if f.suffix == ".csv":
-            for lang_code, translations in load_languages_from_csv(f, None, prefix).items():
-                languages[lang_code].update(translations)
+            languages = merge_languages(languages, load_languages_from_csv(f, None, prefix))
+
+    return languages
+
+
+def merge_languages(lang1: dict[str, dict[str, str]], lang2: dict[str, dict[str, str]]):
+    languages: dict[str, dict[str, str]] = defaultdict(dict)
+
+    for lang_code, translations in itertools.chain(lang1.items(), lang2.items()):
+        languages[lang_code].update(translations)
 
     return languages
 
