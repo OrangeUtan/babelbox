@@ -262,24 +262,30 @@ class Test_dialect:
                 assert languages == {"a": {"x": "1", "y": "3"}, "b": {"x": "2", "y": "4"}}
 
     @pytest.mark.parametrize(
-        "data, dialect, expected",
+        "data, delimiter, expected",
         [
             (
                 """|a|b
                 x|1|2
                 y|3|4""",
-                MockDialect(delimiter="|"),
+                "|",
                 {"a": {"x": "1", "y": "3"}, "b": {"x": "2", "y": "4"}},
-            )
+            ),
+            (
+                """🙏a🙏b
+                x🙏1🙏2
+                y🙏3🙏4""",
+                "🙏",
+                {"a": {"x": "1", "y": "3"}, "b": {"x": "2", "y": "4"}},
+            ),
         ],
     )
-    def test_pass_custom_dialect(self, data, dialect, expected):
-        with patch("csv.Sniffer", MagicMock()) as mock_sniffer:
-            with patch("builtins.open", mock_open(read_data=inspect.cleandoc(data))):
-                languages = babelbox.load_languages_from_csv("test.csv", dialect)
-
-                assert languages == expected
-                mock_sniffer.assert_not_called()
+    def test_overwrite_delimiter(self, data, delimiter, expected):
+        with patch("builtins.open", mock_open(read_data=inspect.cleandoc(data))):
+            languages = babelbox.load_languages_from_csv(
+                "test.csv", dialect_overwrites={"delimiter": delimiter}
+            )
+            assert languages == expected
 
 
 class Test_load_file:

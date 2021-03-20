@@ -5,7 +5,8 @@ from typing import List, Optional
 import typer
 
 import babelbox
-from babelbox.parser import load_languages, merge_languages, write_language_files
+
+from .parser import load_languages, merge_languages, write_language_files
 
 
 def version_callback(value: bool):
@@ -30,6 +31,7 @@ def main(
         file_okay=False,
         writable=True,
     ),
+    delimiter: Optional[str] = typer.Option(None, "-d", "--delimiter", help="CSV delimiter"),
     indent: str = typer.Option(
         "\t", "--indent", "-i", help="Indentation used when generating files"
     ),
@@ -78,8 +80,15 @@ def main(
             )
             raise typer.Exit(code=1)
 
+    csv_dialect_overwrites = {}
+    if delimiter:
+        csv_dialect_overwrites["delimiter"] = delimiter
+
     languages = merge_languages(
-        map(lambda src: load_languages(src, prefix_identifiers), sources)
+        map(
+            lambda src: load_languages(src, prefix_identifiers, csv_dialect_overwrites),
+            sources,
+        )
     )
 
     if not dry:

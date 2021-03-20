@@ -131,6 +131,38 @@ def test_multiple_sources_no_out(runner: CliRunner):
             assert results.stdout == "Multiple sources but no output specified\n"
 
 
+class Test_csv_dialect_overwrites:
+    def test_overwrites_are_passed_to_load(self, runner: CliRunner):
+        with patch("babelbox.parser.load_languages_from_csv") as mock_load_csv:
+            runner.invoke(
+                cli.app,
+                [
+                    "tests/cli/test_dirs/csv_dialect_overwrites/delimiter.csv",
+                    "--dry",
+                    "-d",
+                    "|",
+                ],
+                catch_exceptions=False,
+            )
+
+            mock_load_csv.assert_called_once()
+            assert mock_load_csv.call_args_list[0][0][2] == {"delimiter": "|"}
+
+    def test_delimiter(self, runner: CliRunner):
+        with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:
+            runner.invoke(
+                cli.app,
+                ["tests/cli/test_dirs/csv_dialect_overwrites/delimiter.csv", "-d", "|"],
+                catch_exceptions=False,
+            )
+
+            assert mock_write.call_count == 1
+            assert mock_write.call_args_list[0][0][1] == {
+                "a": {"x": "1", "y": "3"},
+                "b": {"x": "2", "y": "4"},
+            }
+
+
 class Test_logging:
     def test_default_loglevel(self, runner: CliRunner):
         with patch("logging.basicConfig") as mock_logconfig:

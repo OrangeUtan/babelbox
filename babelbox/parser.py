@@ -8,11 +8,9 @@ from . import utils
 __all__ = ["load_languages", "load_languages_from_csv", "write_language_files"]
 
 import csv
-import itertools
 import logging
 import os
 from collections import defaultdict
-from enum import Enum
 from typing import Iterable, Optional, Type, Union
 
 logger = logging.getLogger(__name__)
@@ -32,7 +30,11 @@ def write_language_files(
             json.dump(translations, f, indent=indent, ensure_ascii=False)
 
 
-def load_languages(src: Union[str, os.PathLike], prefix_identifiers=False):
+def load_languages(
+    src: Union[str, os.PathLike],
+    prefix_identifiers=False,
+    csv_dialect_overwrites: Optional[dict] = None,
+):
     """ Loads languages from directory """
 
     src = Path(src)
@@ -49,7 +51,7 @@ def load_languages(src: Union[str, os.PathLike], prefix_identifiers=False):
         prefix = utils.relative_path_to(f, src) + "." if prefix_identifiers else ""
 
         if f.suffix == ".csv":
-            file_languages.append(load_languages_from_csv(f, None, prefix))
+            file_languages.append(load_languages_from_csv(f, prefix, csv_dialect_overwrites))
 
     return merge_languages(file_languages)
 
@@ -65,7 +67,7 @@ def merge_languages(language_collections: Iterable[dict[str, dict[str, str]]]):
 
 
 def load_languages_from_csv(
-    path: Union[str, os.PathLike], dialect: Optional[DialectLike] = None, prefix: str = ""
+    path: Union[str, os.PathLike], prefix: str = "", dialect_overwrites: Optional[dict] = None
 ):
     """
     Loads csv file and parses it to a dictionary mapping each column to a language code.
@@ -78,15 +80,14 @@ def load_languages_from_csv(
     """
 
     with open(path, newline="", encoding="utf8") as csv_file:
-        if not dialect:
-            try:
-                dialect = csv.Sniffer().sniff(csv_file.read(1024))
-            except Exception:
-                dialect = csv.excel
-            finally:
-                csv_file.seek(0)
+        try:
+            dialect = csv.Sniffer().sniff(csv_file.read(1024))
+        except Exception:
+            dialect = csv.excel
+        finally:
+            csv_file.seek(0)
 
-        reader = csv.DictReader(csv_file, dialect=dialect)
+        reader = csv.DictReader(csv_file, dialect=dialect, **(dialect_overwrites or {}))
         indentifier_column, *language_codes = reader.fieldnames or [""]
 
         languages: dict[str, dict[str, str]] = defaultdict(dict)
