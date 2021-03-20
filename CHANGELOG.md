@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.0.0] - 2021-03-20
 ### Feature
 - `--quiet` flag
 - Source can now be file or directory
