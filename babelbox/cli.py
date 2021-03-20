@@ -47,10 +47,13 @@ def main(
         help="Prefix identifiers with their path relative to SRC",
     ),
     dry: bool = typer.Option(
-        False, "--dry", help="Dry run. Don't generate any files", is_flag=True
+        False, "-d", "--dry", help="Dry run. Don't generate any files", is_flag=True
     ),
     verbose: bool = typer.Option(
         False, "-v", "--verbose", is_flag=True, help="Increase verbosity"
+    ),
+    quiet: bool = typer.Option(
+        False, "-q", "--quiet", is_flag=True, help="Suppress logging. Only print errors"
     ),
     version: bool = typer.Option(None, "--version", callback=version_callback, is_eager=True),
 ):
@@ -61,6 +64,9 @@ def main(
         format="{levelname}: {message}",
         style="{",
     )
+
+    if quiet:
+        logger.disabled = True
 
     if out is None:
         if len(sources) == 1:
