@@ -4,7 +4,7 @@ from pathlib import Path
 
 def relative_path_to(file: Path, dir: Path, path_delimiter=".") -> str:
     parts = list(file.relative_to(dir).parts)
-    parts[-1] = parts[-1].removesuffix(file.suffix)
+    parts[-1] = parts[-1][: -len(file.suffix)]
     return path_delimiter.join(parts)
 
 
