@@ -13,7 +13,7 @@ import logging
 import os
 from collections import defaultdict
 from enum import Enum
-from typing import Optional, Type, Union
+from typing import Iterable, Optional, Type, Union
 
 logger = logging.getLogger("babelbox")
 
@@ -44,28 +44,24 @@ def load_languages(src: Union[str, os.PathLike], prefix_identifiers=False):
         files = [src]
         src = src.parent
 
-    languages: dict[str, dict[str, str]] = defaultdict(dict)
+    file_languages: list[dict[str, dict[str, str]]] = []
     for f in files:
-        if prefix_identifiers:
-            parts = list(f.relative_to(src).parts)
-            parts[-1] = parts[-1].removesuffix(f.suffix)
-            prefix = ".".join(parts) + "."
-        else:
-            prefix = ""
+        prefix = utils.relative_path_to(f, src) + "." if prefix_identifiers else ""
 
         if f.suffix == ".csv":
-            languages = merge_languages(languages, load_languages_from_csv(f, None, prefix))
+            file_languages.append(load_languages_from_csv(f, None, prefix))
 
-    return languages
+    return merge_languages(file_languages)
 
 
-def merge_languages(lang1: dict[str, dict[str, str]], lang2: dict[str, dict[str, str]]):
-    languages: dict[str, dict[str, str]] = defaultdict(dict)
+def merge_languages(language_collections: Iterable[dict[str, dict[str, str]]]):
+    result: dict[str, dict[str, str]] = defaultdict(dict)
 
-    for lang_code, translations in itertools.chain(lang1.items(), lang2.items()):
-        languages[lang_code].update(translations)
+    for languages in language_collections:
+        for language_code, translations in languages.items():
+            result[language_code].update(translations)
 
-    return languages
+    return result
 
 
 def load_languages_from_csv(

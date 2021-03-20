@@ -77,9 +77,9 @@ def main(
             )
             raise typer.Exit(code=1)
 
-    languages: dict[str, dict[str, str]] = defaultdict(dict)
-    for src in sources:
-        languages = merge_languages(languages, load_languages(src, prefix_identifiers))
+    languages = merge_languages(
+        map(lambda src: load_languages(src, prefix_identifiers), sources)
+    )
 
     if not dry:
         out.mkdir(parents=True, exist_ok=True)
