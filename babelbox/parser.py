@@ -1,75 +1,120 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
+from . import utils
+
+__all__ = [
+    "load_languages",
+    "load_languages_from_csv",
+    "write_language_files",
+    "merge_languages",
+]
+
 import csv
 import logging
 import os
-import warnings
 from collections import defaultdict
-from pathlib import Path
-from typing import Iterator, List, Optional, Union, cast
+from typing import Iterable, Optional, Type, Union
+
+logger = logging.getLogger(__name__)
+
+DialectLike = Union[str, csv.Dialect, Type[csv.Dialect]]
 
 
-class ParserError(Exception):
-    pass
-
-
-def repr_dialect(dialect: csv.Dialect):
-    return f"Dialect(delimiter={repr(dialect.delimiter)}, escapechar={repr(dialect.escapechar)}, lineterminator={repr(dialect.lineterminator)}, quoting={repr(dialect.quoting)}, doublequote={repr(dialect.doublequote)}, skipinitialspace={repr(dialect.skipinitialspace)})"
-
-
-def load_locales_from_csv(
-    file: Union[str, Path], dialect: Optional[csv.Dialect] = None, prefix_filename=False
+def write_language_files(
+    dest_dir: Union[str, os.PathLike],
+    languages: dict[str, dict[str, str]],
+    indent: Optional[str] = None,
 ):
-    file = Path(file)
-    prefix = os.path.splitext(file.name)[0]
+    for language_code, translations in languages.items():
+        path = Path(dest_dir, language_code + ".json")
+        logging.info(f"Writing language file {path!r}")
+        with open(path, "w", encoding="utf8") as f:
+            json.dump(translations, f, indent=indent, ensure_ascii=False)
 
-    with file.open("r", encoding="utf-8") as f:
-        if dialect is None:
-            # Try to guess dialect or fall back to excel
-            try:
-                dialect = cast(csv.Dialect, csv.Sniffer().sniff(f.read(1024)))
-            except Exception:
-                warnings.warn(
-                    f"Couldn't determine csv dialect of {repr(str(file))}. Falling back to 'excel'",
-                    UserWarning,
-                )
-                dialect = csv.get_dialect("excel")
-            finally:
-                f.seek(0)
 
-        reader = csv.reader(f, dialect=dialect)
+def load_languages(
+    src: Union[str, os.PathLike],
+    prefix_identifiers=False,
+    csv_dialect_overwrites: Optional[dict] = None,
+):
+    """ Loads languages from directory """
 
+    src = Path(src)
+
+    if src.is_dir():
+        files = list(utils.files_in_dir(src))
+    else:
+        # Source is a file. Only load languages from that file
+        files = [src]
+        src = src.parent
+
+    file_languages: list[dict[str, dict[str, str]]] = []
+    for f in files:
+        prefix = utils.relative_path_to(f, src) + "." if prefix_identifiers else ""
+
+        if f.suffix == ".csv":
+            file_languages.append(load_languages_from_csv(f, prefix, csv_dialect_overwrites))
+
+    return merge_languages(file_languages)
+
+
+def merge_languages(language_collections: Iterable[dict[str, dict[str, str]]]):
+    result: dict[str, dict[str, str]] = defaultdict(dict)
+
+    for languages in language_collections:
+        for language_code, translations in languages.items():
+            result[language_code].update(translations)
+
+    return result
+
+
+def load_languages_from_csv(
+    path: Union[str, os.PathLike], prefix: str = "", dialect_overwrites: Optional[dict] = None
+):
+    """
+    Loads csv file and parses it to a dictionary mapping each column to a language code.
+
+    | Identifier | en_us | de_de |\n
+    | car        | Car   | Auto  |\n
+    | cat        | Cat   | Katze |
+
+    => {"en_us": {"car": "Car", "cat": "Katze"}, "de_de": {"car": "Autor", "cat": "Katze"}}
+    """
+
+    with open(path, newline="", encoding="utf8") as csv_file:
         try:
-            header = next(reader)
-        except StopIteration as e:
-            raise ParserError(
-                f"Failed to read '{str(file)}'. Either file is empty or the dialect is wrong: '{repr_dialect(dialect)}'"
-            ) from e
+            dialect = csv.Sniffer().sniff(csv_file.read(1024))
+        except Exception:
+            dialect = csv.excel
+        finally:
+            csv_file.seek(0)
 
-        logging.info(f"Reading locales from '{str(file)}'")
-        id_column_name, locale_names = header[0], header[1:]
-        locales = create_locales_from_csv(
-            locale_names, reader, prefix if prefix_filename else None
-        )
+        reader = csv.DictReader(csv_file, dialect=dialect, **(dialect_overwrites or {}))
+        indentifier_column, *language_codes = reader.fieldnames or [""]
 
-    return locales
+        languages: dict[str, dict[str, str]] = defaultdict(dict)
+        for i, row in enumerate(reader):
+            if not (identifier := row[indentifier_column]):
+                if any(row.values()):
+                    logger.warning(f"{path!r}@{i+2}: Non-empty line is missing identifier")
+                continue
 
+            # Skip comments
+            if identifier.startswith("#") and not any(map(lambda l: row[l], language_codes)):
+                continue
 
-def create_locales_from_csv(
-    locale_names: List[str], rows: Iterator[List[str]], prefix: Optional[str] = None
-):
-    locales: defaultdict[str, dict[str, str]] = defaultdict(dict)
-    for i, row in enumerate(rows):
-        variable, translations = row[0], row[1:]
-        if not variable:
-            raise ParserError(f"Row {i+2}: Variable cannot be empty")
+            identifier = prefix + identifier
 
-        if prefix:
-            variable = f"{prefix}.{variable}"
-        for locale, translation in zip(locale_names, translations):
-            if not translation:
-                logging.warning(f"Locale '{locale}' has no translation for '{variable}'")
+            for code in language_codes:
+                if not (translation := row[code]):
+                    logger.warning(
+                        f"{path!r}: Locale {code!r} has no translation for {identifier!r}"
+                    )
+                    translation = ""
 
-            locales[locale][variable] = translation
+                languages[code][identifier] = translation
 
-    return locales
+        return languages
