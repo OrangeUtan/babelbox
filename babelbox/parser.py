@@ -97,6 +97,10 @@ def load_languages_from_csv(
                     logger.warning(f"{path!r}@{i+2}: Non-empty line is missing identifier")
                 continue
 
+            # Skip comments
+            if identifier.startswith("#") and not any(map(lambda l: row[l], language_codes)):
+                continue
+
             identifier = prefix + identifier
 
             for code in language_codes:
