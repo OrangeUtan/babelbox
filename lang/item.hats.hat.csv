@@ -1,0 +1,77 @@
+String,de_de,en_us
+# Misc
+fez.name,Fez,Fez
+squid.name,Tintenfisch,Squid
+arrow_prop.name,Pfeil Attrape,Fake Arrow
+arrow_prop.lore1,>>-o.o->,>>-o.o->
+frying_pan.name,Bratpfanne,Frying Pan
+# Dog
+dog.name,Hund,Dog
+# Cats
+ocelot.name,Ozelot,Ocelot
+tabby_cat.name,Getigerte Katze,Tabby Cat
+tuxedo_cat.name,Schwarze Katze,Tuxedo Cat
+red_cat.name,Rote Katze,Red Cat
+siamese_cat.name,Siam Katze,Siamese Cat
+british_shorthair.name,Britisch-Kurzhaar,British Shorthair
+calico_cat.name,Calico,Calico Cat
+persian_cat.name,Perser,Persian Cat
+ragdoll.name,Ragdoll,Ragdoll
+white_cat.name,Weiße Katze,White Cat
+jellie.name,Jellie,Jellie
+black_cat.name,Panther Katze,Black Cat
+# Tophats
+white_tophat.name,Weißer Zylinder,White Tophat
+orange_tophat.name,Oranger Zylinder,Orange Tophat
+magenta_tophat.name,Magenta Zylinder,Magenta Tophat
+light_blue_tophat.name,Hellblauer Zylinder,Light Blue Tophat
+yellow_tophat.name,Gelber Zylinder,Yellow Tophat
+lime_tophat.name,Hellgrüner Zylinder,Lime Tophat
+pink_tophat.name,Rosa Zylinder,Pink Tophat
+gray_tophat.name,Grauer Zylinder,Gray Tophat
+light_gray_tophat.name,Hellgrau Zylinder,Light Gray Tophat
+cyan_tophat.name,Türkiser Zylinder,Cyan Tophat
+purple_tophat.name,Violetter Zylinder,Purple Tophat
+blue_tophat.name,Blauer Zylinder,Blue Tophat
+brown_tophat.name,Brauner Zylinder,Brown Tophat
+green_tophat.name,Grüner Zylinder,Green Tophat
+red_tophat.name,Roter Zylinder,Red Tophat
+black_tophat.name,Schwarzer Zylinder,Black Tophat
+rainbow_tophat.name,Regenbogen Zylinder,Rainbow Tophat
+tophat_with_monocle.name,Zylinder mit Monokel,Tophat with Monocle
+# Glasses
+sunglasses.name,Sonnenbrille,Sunglasses
+harry_potter_glasses.name,Harry Potter Brille,Harry Potter glasses
+half_rim_glasses.name,Halbrandbrille,Half-rim glasses
+rainbow_glasse.name,Regenbogenbrille,Rainbow glasses
+librarian_glasses.name,Bibliothekaren Brille,Librarian glasses
+3D_glasses.name,3D Brille,3D glasses
+# Accessories
+ninja_headband.name,Ninja Stirnband,Ninja Headband
+steve_mask.name,Steve Maske,Steve Mask
+steve_mask.lore1,,Greetings fellow Player
+alex_mask.name,Alex Maske,Alex Mask
+alex_mask.lore1,,Greetings fellow Player
+snorkel_mask_blue.name,Blaue Schnorchelmaske,Blue Snorkel Mask
+snorkel_mask_red.name,Rote Schnorchelmaske,Red Snorkel Mask
+googly_eyes.name,Wackelaugen,Googly Eyes
+earth_in_orbit.name,Erde in der Umlaufbahn,Earth in Orbit
+# Villager
+armorer_mask.name,Visier des Rüstungsschmieds,Armorer Mask
+farmer_strawhat.name,Bauern Strohhut,Farmers Strawhat
+villager_nose.name,Dorfbewohner Nase,Villager Nose
+villager_nose.lore1,Hab deine Nase :P,Got your nose :P
+# Mario
+mario_cap.name,Mario Kappe,Mario Cap
+luigi_cap.name,Luigi Kappe,Luigi Cap
+cappy.name,Cappy,Cappy
+toad_red.name,Roter Toad,Red Toad
+toad_blue.name,Blauer Toad,Blue Toad
+toad_yellow.name,Gelber Toad,Yellow Toad
+toad_green.name,Grüner Toad,Green Toad
+mario_mask.name,Mario Cosplay,Mario Cosplay
+luigi_mask.name,Luigi Cosplay,Luigi Cosplay
+# Halloween
+wiggly_ghast.name,Wackelnder Geist,Wiggly Ghast
+native_american_headband.name,Indianer Kopfband,Native American Headband
+jason_mask.name,Jason Mask,Jason Mask
