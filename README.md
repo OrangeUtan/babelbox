@@ -19,6 +19,7 @@ Creating translations in CSV gives you an easy overview over any errors or missi
     - [Directory source](#Directory-source)
     - [Shorten variable names](#Shorten-variable-names)
     - [Organize translations in folders](#Organize-translations-in-folders)
+- [Contributing](#Contributing)
 - [Changelog](https://github.com/OrangeUtan/babelbox/blob/main/CHANGELOG.md)
 
 # Installation
@@ -228,7 +229,7 @@ resourcepack
   └╴ de_de.json
 ```
 
-# Contriubution
+# Contributing
 Contributions are welcome. Make sure to first open an issue discussing the problem or the new feature before creating a pull request. The project uses [`poetry`](https://python-poetry.org/). Setup automatically with [`invoke`](http://www.pyinvoke.org/) or manualy with poetry:
 ```shell
 $ # Either
