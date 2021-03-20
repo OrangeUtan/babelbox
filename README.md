@@ -96,7 +96,7 @@ resourcepack
 ```
 
 ## Directory source
-We a two `.csv` files containing translations:
+We have two `.csv` files containing translations:
 ```
 resourcepack
 ⠇
