@@ -5,7 +5,12 @@ from pathlib import Path
 
 from . import utils
 
-__all__ = ["load_languages", "load_languages_from_csv", "write_language_files"]
+__all__ = [
+    "load_languages",
+    "load_languages_from_csv",
+    "write_language_files",
+    "merge_languages",
+]
 
 import csv
 import logging
