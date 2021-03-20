@@ -191,11 +191,34 @@ class Test_parsing:
                 x,1,2
                 ,,"""
         with patch("builtins.open", mock_open(read_data=inspect.cleandoc(data))):
-            with patch("builtins.open", mock_open(read_data=inspect.cleandoc(data))):
-                languages = babelbox.load_languages_from_csv("test.csv")
-                assert languages == {"a": {"x": "1"}, "b": {"x": "2"}}
+            languages = babelbox.load_languages_from_csv("test.csv")
+            assert languages == {"a": {"x": "1"}, "b": {"x": "2"}}
 
             assert len(caplog.records) == 0
+
+    def test_comments(self):
+        data = """Ident,a,b
+                # A Comment
+                x,1,2
+                # 1
+                # 2
+                # 3
+                ,,"""
+        with patch("builtins.open", mock_open(read_data=inspect.cleandoc(data))):
+            languages = babelbox.load_languages_from_csv("test.csv")
+            assert languages == {"a": {"x": "1"}, "b": {"x": "2"}}
+
+    def test_comment_with_nonempty_columns(self):
+        data = """Ident,a,b
+                # A Comment, nonempty
+                x,1,2
+                ,,"""
+        with patch("builtins.open", mock_open(read_data=inspect.cleandoc(data))):
+            languages = babelbox.load_languages_from_csv("test.csv")
+            assert languages == {
+                "a": {"x": "1", "# A Comment": " nonempty"},
+                "b": {"x": "2", "# A Comment": ""},
+            }
 
 
 class Test_prefix:
