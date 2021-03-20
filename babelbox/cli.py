@@ -1,6 +1,4 @@
-import json
 import logging
-from collections import defaultdict
 from pathlib import Path
 from typing import List, Optional
 
@@ -8,8 +6,6 @@ import typer
 
 import babelbox
 from babelbox.parser import load_languages, merge_languages, write_language_files
-
-logger = logging.getLogger("babelbox")
 
 
 def version_callback(value: bool):
@@ -29,6 +25,7 @@ def main(
     out: Optional[Path] = typer.Option(
         None,
         "-o",
+        "--out",
         help="The output directory of the generated files",
         file_okay=False,
         writable=True,
@@ -44,29 +41,33 @@ def main(
         "--prefix-identifiers",
         "-p",
         is_flag=True,
-        help="Prefix identifiers with their path relative to SRC",
-    ),
-    dry: bool = typer.Option(
-        False, "-d", "--dry", help="Dry run. Don't generate any files", is_flag=True
+        help="Prefix identifiers with their path relative to their SOURCES entry",
     ),
     verbose: bool = typer.Option(
         False, "-v", "--verbose", is_flag=True, help="Increase verbosity"
     ),
     quiet: bool = typer.Option(
-        False, "-q", "--quiet", is_flag=True, help="Suppress logging. Only print errors"
+        False, "-q", "--quiet", is_flag=True, help="Only output errors"
+    ),
+    dry: bool = typer.Option(
+        False, "--dry", help="Dry run. Don't generate any files", is_flag=True
     ),
     version: bool = typer.Option(None, "--version", callback=version_callback, is_eager=True),
 ):
     """Create language localization files from csv files"""
 
+    if quiet:
+        loglevel = logging.ERROR
+    elif verbose:
+        loglevel = logging.INFO
+    else:
+        loglevel = logging.WARNING
+
     logging.basicConfig(
-        level=logging.INFO if verbose else logging.WARNING,
+        level=loglevel,
         format="{levelname}: {message}",
         style="{",
     )
-
-    if quiet:
-        logger.disabled = True
 
     if out is None:
         if len(sources) == 1:

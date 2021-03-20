@@ -15,7 +15,7 @@ from collections import defaultdict
 from enum import Enum
 from typing import Iterable, Optional, Type, Union
 
-logger = logging.getLogger("babelbox")
+logger = logging.getLogger(__name__)
 
 DialectLike = Union[str, csv.Dialect, Type[csv.Dialect]]
 

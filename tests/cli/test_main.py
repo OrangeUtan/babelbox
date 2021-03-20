@@ -1,7 +1,9 @@
+import logging
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+from _pytest.logging import LogCaptureFixture
 from typer.testing import CliRunner
 
 from babelbox import cli
@@ -127,3 +129,36 @@ def test_multiple_sources_no_out(runner: CliRunner):
 
             assert results.exit_code == 1
             assert results.stdout == "Multiple sources but no output specified\n"
+
+
+class Test_logging:
+    def test_default_loglevel(self, runner: CliRunner):
+        with patch("logging.basicConfig") as mock_logconfig:
+            runner.invoke(
+                cli.app, ["tests/cli/test_dirs/multiple_csv", "--dry"], catch_exceptions=False
+            )
+
+            mock_logconfig.assert_called_once()
+            assert mock_logconfig.call_args_list[0][1]["level"] == logging.WARNING
+
+    def test_quiet(self, runner: CliRunner):
+        with patch("logging.basicConfig") as mock_logconfig:
+            runner.invoke(
+                cli.app,
+                ["tests/cli/test_dirs/multiple_csv", "--quiet", "--dry"],
+                catch_exceptions=False,
+            )
+
+            mock_logconfig.assert_called_once()
+            assert mock_logconfig.call_args_list[0][1]["level"] == logging.ERROR
+
+    def test_verbose(self, runner: CliRunner):
+        with patch("logging.basicConfig") as mock_logconfig:
+            runner.invoke(
+                cli.app,
+                ["tests/cli/test_dirs/multiple_csv", "--verbose", "--dry"],
+                catch_exceptions=False,
+            )
+
+            mock_logconfig.assert_called_once()
+            assert mock_logconfig.call_args_list[0][1]["level"] == logging.INFO

@@ -145,7 +145,7 @@ class Test_parsing:
                 assert babelbox.load_languages_from_csv("test.csv") == expected
 
             assert len(caplog.records) == 1
-            assert caplog.record_tuples[0][0] == "babelbox"
+            assert caplog.record_tuples[0][0] == "babelbox.parser"
             assert caplog.record_tuples[0][1] == logging.WARNING
             assert match(
                 "'test.csv': Locale '.' has no translation for '.'", caplog.record_tuples[0][2]
@@ -179,7 +179,7 @@ class Test_parsing:
                 assert languages == expected
 
             assert len(caplog.records) == 1
-            assert caplog.record_tuples[0][0] == "babelbox"
+            assert caplog.record_tuples[0][0] == "babelbox.parser"
             assert caplog.record_tuples[0][1] == logging.WARNING
             assert match(
                 "'test.csv'@3: Non-empty line is missing identifier",
@@ -304,7 +304,7 @@ class Test_load_file:
 
             assert len(caplog.records) == 2
             for name, level, msg in caplog.record_tuples:
-                assert name == "babelbox"
+                assert name == "babelbox.parser"
                 assert level == logging.WARNING
                 assert match(
                     "'tests/parser/res/missing_translations.csv': Locale '.*' has no translation for '.*'",
