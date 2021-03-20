@@ -54,7 +54,7 @@ $ babelbox SOURCES...
 
 # Examples
 ## Single file source:
-We a `.csv` file containing translations:
+We have one `.csv` file containing translations:
 ```
 resourcepack
 ⠇
