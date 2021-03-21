@@ -220,6 +220,15 @@ class Test_parsing:
                 "b": {"x": "2", "# A Comment": ""},
             }
 
+    def test_enswith_newlines(self):
+        languages = babelbox.load_languages_from_csv(
+            "tests/parser/res/ends_with_newlines.csv", dialect_overwrites={"delimiter": ","}
+        )
+        assert languages == {
+            "a": {"x": "1", "y": "3"},
+            "b": {"x": "2", "y": "4"},
+        }
+
 
 class Test_prefix:
     def test(self):
