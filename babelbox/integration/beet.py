@@ -11,9 +11,11 @@ def beet_default(ctx: Context):
     """ Entry point into beet pipeline. Loads configuration and executes babelbox plugin """
 
     config = ctx.meta.get("babelbox", {})
+    csv_dialect_overwrites = {}
 
     load = config.get("load", ())
-    csv_dialect_overwrites = config.get("dialect")
+    if delimiter := config.get("delimiter"):
+        csv_dialect_overwrites["delimiter"] = delimiter
     prefix_identifiers = config.get("prefix_identifiers")
 
     ctx.require(create_babelbox_plugin(load, csv_dialect_overwrites, prefix_identifiers))

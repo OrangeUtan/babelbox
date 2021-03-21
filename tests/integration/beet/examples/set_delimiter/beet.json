@@ -1,0 +1,15 @@
+{
+    "resource_pack": {
+        "load": ["resourcepack"]
+    },
+    "pipeline": [
+        "babelbox.integration.beet"
+    ],
+    "meta": {
+        "babelbox": {
+            "load": ["a.csv"],
+            "prefix_identifiers": true,
+            "delimiter": "|"
+        }
+    }
+}
