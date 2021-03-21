@@ -1,0 +1,26 @@
+[
+  {
+    "minecraft:a": {
+      "node1.leave.1.1.x": "1",
+      "node1.leave.1.1.y": "3",
+      "node1.node11.leave.1.1.1.x": "1",
+      "node1.node11.leave.1.1.1.y": "3",
+      "node2.leave21.x": "1",
+      "node2.leave21.y": "3",
+      "node2.node21.leave211.x": "1",
+      "node2.node21.leave211.y": "3"
+    }
+  },
+  {
+    "minecraft:b": {
+      "node1.leave.1.1.x": "2",
+      "node1.leave.1.1.y": "4",
+      "node1.node11.leave.1.1.1.x": "2",
+      "node1.node11.leave.1.1.1.y": "4",
+      "node2.leave21.x": "2",
+      "node2.leave21.y": "4",
+      "node2.node21.leave211.x": "2",
+      "node2.node21.leave211.y": "4"
+    }
+  }
+]
