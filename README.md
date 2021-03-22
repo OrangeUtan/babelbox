@@ -19,6 +19,7 @@ Creating translations in CSV gives you an easy overview over any errors or missi
     - [Directory source](#Directory-source)
     - [Shorten variable names](#Shorten-variable-names)
     - [Organize translations in folders](#Organize-translations-in-folders)
+- [Beet plugin](#Beet-plugin)
 - [Contributing](#Contributing)
 - [Changelog](https://github.com/OrangeUtan/babelbox/blob/main/CHANGELOG.md)
 
@@ -62,9 +63,9 @@ $ babelbox SOURCES...
 We have one `.csv` file containing translations:
 ```
 resourcepack
-⠇
-└╴lang
-  └╴ items.csv
+  ⠇
+  └╴lang
+    └╴ items.csv
 ```
 
 | Item                                | en_us    | de_de      |
@@ -93,21 +94,21 @@ de_de.json
 
 ```
 resourcepack
-⠇
-└╴lang
-  ├╴ items.csv
-  ├╴ en_us.json
-  └╴ de_de.json
+  ⠇
+  └╴lang
+    ├╴ items.csv
+    ├╴ en_us.json
+    └╴ de_de.json
 ```
 
 ## Directory source
 We have two `.csv` files containing translations:
 ```
 resourcepack
-⠇
-└╴lang
-  ├╴ items.csv
-  └╴ blocks.csv
+  ⠇
+  └╴lang
+    ├╴ items.csv
+    └╴ blocks.csv
 ```
 **items.csv**
 | Item                 | en_us    | de_de      |
@@ -138,12 +139,12 @@ de_de.json
 ```
 ```
 resourcepack
-⠇
-└╴lang
-  ├╴ items.csv
-  ├╴ blocks.csv
-  ├╴ en_us.json
-  └╴ de_de.json
+  ⠇
+  └╴lang
+    ├╴ items.csv
+    ├╴ blocks.csv
+    ├╴ en_us.json
+    └╴ de_de.json
 ```
 
 ## Shorten variable names:
@@ -151,9 +152,9 @@ We can use the `--prefix-identifiers` flag to save ourselve some typing. If all 
 
 ```
 resourcepack
-⠇
-└╴lang
-  └╴ item.swords.csv
+  ⠇
+  └╴lang
+    └╴ item.swords.csv
 ```
 | Swords         | en_us         | de_de          |
 | -------------- | ------------- | -------------- |
@@ -187,12 +188,12 @@ We can save ourselves even more typing and organize our translations files in a 
 
 ```
 resourcepack
-⠇
-└╴lang
-  ├╴ item
-  │  └╴ swords.csv
-  └╴ block
-     └╴ heavy.csv
+  ⠇
+  └╴lang
+    ├╴ item
+    │  └╴ swords.csv
+    └╴ block
+      └╴ heavy.csv
 ```
 **swords.csv**
 | Swords         | en_us         | de_de          |
@@ -223,14 +224,61 @@ de_de.json
 ```
 ```
 resourcepack
-⠇
-└╴lang
-  ├╴ item
-  │  └╴ swords.csv
-  ├╴ block
-  │   └╴ heavy.csv
-  ├╴ en_us.json
-  └╴ de_de.json
+  ⠇
+  └╴lang
+    ├╴ item
+    │  └╴ swords.csv
+    ├╴ block
+    │   └╴ heavy.csv
+    ├╴ en_us.json
+    └╴ de_de.json
+```
+
+# Beet plugin
+Babelbox can be used as a [`beet`](https://github.com/mcbeet/beet) plugin.
+Here is a example beet project using babelbox:
+```
+beet.json
+resourcepack
+  ⠇
+  └╴lang
+    └╴item.swords.csv
+```
+**swords.csv**
+| Swords         | en_us         | de_de          |
+| -------------- | ------------- | -------------- |
+| gold.﻿name    | Gold sword    | Goldschwert    |
+
+**beet.json**
+```json
+{
+  "output": "build",
+  "resource_pack": {
+    "load": ["resourcepack"]
+  },
+  "pipeline": [
+      "babelbox.integration.beet"
+  ],
+  "meta": {
+      "babelbox": {
+          "load": ["resourcepack/assets/minecraft/lang"],
+          "prefix_identifiers": true
+      }
+  }
+}
+```
+Running `beet build` generates the language files:
+```
+beet.json
+resourcepack
+  ⠇
+  └╴lang
+    └╴item.swords.csv
+build
+  ⠇
+  └╴lang
+    ├╴en_us.json
+    └╴de_de.json
 ```
 
 # Contributing
