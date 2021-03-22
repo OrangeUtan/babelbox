@@ -1,0 +1,44 @@
+{
+  "a": {
+    "a.x": "1",
+    "a.y": "10",
+    "b.s": "1",
+    "b.t": "10"
+  },
+  "b": {
+    "a.x": "2",
+    "a.y": "11",
+    "b.s": "2",
+    "b.t": "11"
+  },
+  "c": {
+    "a.x": "3",
+    "a.y": "12",
+    "b.s": "3",
+    "b.t": "12"
+  },
+  "k": {
+    "space in name.s": "1",
+    "space in name.t": "10"
+  },
+  "l": {
+    "space in name.s": "2",
+    "space in name.t": "11"
+  },
+  "m": {
+    "space in name.s": "3",
+    "space in name.t": "12"
+  },
+  "\u00e4": {
+    "unicode.s": "\u262d",
+    "unicode.t": "\u16a6"
+  },
+  "\u00f6": {
+    "unicode.s": "\u01fb",
+    "unicode.t": "\ud83d\udd25"
+  },
+  "\u00fc": {
+    "unicode.s": "\ud83d\ude92",
+    "unicode.t": "\u023a"
+  }
+}

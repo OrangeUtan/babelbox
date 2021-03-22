@@ -1,0 +1,22 @@
+{
+  "a": {
+    "a.x": "1",
+    "a.y": "3",
+    "unicode.k": "\u0da3",
+    "unicode.l": "3"
+  },
+  "b": {
+    "a.x": "2",
+    "a.y": "4",
+    "unicode.k": "2",
+    "unicode.l": "\u0e1c"
+  },
+  "en_us": {
+    "missing_translations.cat": "Cat",
+    "missing_translations.spoon": ""
+  },
+  "de_de": {
+    "missing_translations.cat": "",
+    "missing_translations.spoon": "L\u00f6ffel"
+  }
+}

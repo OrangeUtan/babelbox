@@ -1,0 +1,14 @@
+{
+    "resource_pack": {
+        "load": ["resourcepack"]
+    },
+    "pipeline": [
+        "babelbox.integration.beet"
+    ],
+    "meta": {
+        "babelbox": {
+            "load": ["root"],
+            "prefix_identifiers": true
+        }
+    }
+}

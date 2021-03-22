@@ -1,0 +1,26 @@
+{
+  "a": {
+    "a.x": "1",
+    "a.y": "10",
+    "node.b.s": "1",
+    "node.b.t": "10",
+    "node.leave.c.\u00e4": "1",
+    "node.leave.c.\u00f6": "10"
+  },
+  "b": {
+    "a.x": "2",
+    "a.y": "11",
+    "node.b.s": "2",
+    "node.b.t": "11",
+    "node.leave.c.\u00e4": "2",
+    "node.leave.c.\u00f6": "11"
+  },
+  "c": {
+    "a.x": "3",
+    "a.y": "12",
+    "node.b.s": "3",
+    "node.b.t": "12",
+    "node.leave.c.\u00e4": "3",
+    "node.leave.c.\u00f6": "12"
+  }
+}

@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-from _pytest.logging import LogCaptureFixture
+from pytest_insta import SnapshotFixture
 from typer.testing import CliRunner
 
 from babelbox import cli
@@ -14,145 +14,160 @@ def runner():
     return CliRunner()
 
 
-def test_no_args(runner: CliRunner):
-    assert "Missing argument" in runner.invoke(cli.app).output
+class Test_sources_arg:
+    def test_no_source(self, runner: CliRunner):
+        """ No source passed. E.g. `babelbox`"""
 
+        assert "Missing argument" in runner.invoke(cli.app).output
 
-def test_file_not_found(runner: CliRunner):
-    result = runner.invoke(cli.app, "doesnt_exist")
-    assert str(result.exception) == "2"
-    assert "does not exist" in result.output
+    def test_src_does_not_exist(self, runner: CliRunner):
+        """ Passed source does not exist. E.g. `babelbox /unicorn/`"""
 
+        result = runner.invoke(cli.app, "doesnt_exist")
+        assert str(result.exception) == "2"
+        assert "does not exist" in result.output
 
-@pytest.mark.parametrize(
-    "src, expected, expected_prefixed",
-    [
-        (
-            "tests/cli/test_dirs/multiple_csv",
-            {
-                "a": {"x": "1", "y": "10", "s": "1", "t": "10"},
-                "b": {"x": "2", "y": "11", "s": "2", "t": "11"},
-                "c": {"x": "3", "y": "12", "s": "3", "t": "12"},
-            },
-            {
-                "a": {"a.x": "1", "a.y": "10", "b.s": "1", "b.t": "10"},
-                "b": {"a.x": "2", "a.y": "11", "b.s": "2", "b.t": "11"},
-                "c": {"a.x": "3", "a.y": "12", "b.s": "3", "b.t": "12"},
-            },
-        ),
-        (
-            "tests/cli/test_dirs/read_only_csv",
-            {
-                "a": {"x": "1", "y": "10", "s": "1", "t": "10"},
-                "b": {"x": "2", "y": "11", "s": "2", "t": "11"},
-                "c": {"x": "3", "y": "12", "s": "3", "t": "12"},
-            },
-            {
-                "a": {"a.x": "1", "a.y": "10", "b.s": "1", "b.t": "10"},
-                "b": {"a.x": "2", "a.y": "11", "b.s": "2", "b.t": "11"},
-                "c": {"a.x": "3", "a.y": "12", "b.s": "3", "b.t": "12"},
-            },
-        ),
-    ],
-)
-def test_dirs(src, expected, expected_prefixed, runner: CliRunner):
-    with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write_lang_files:
-        runner.invoke(cli.app, src, catch_exceptions=False)
-        runner.invoke(cli.app, [src, "-p"], catch_exceptions=False)
+    @pytest.mark.parametrize("directory", ["ignore_non_csv", "multiple_csv", "tree"])
+    def test_dir(self, directory, snapshot: SnapshotFixture, runner: CliRunner):
+        """ Source arg is a directory. E.g. `babelbox ./dir/` """
 
-        assert mock_write_lang_files.call_count == 2
+        with patch(
+            "babelbox.cli.write_language_files", new=MagicMock()
+        ) as mock_write_lang_files:
+            # No args
+            runner.invoke(cli.app, "tests/cli/examples/" + directory, catch_exceptions=False)
+            assert mock_write_lang_files.call_count == 1
+            assert (
+                snapshot("dest.txt")
+                == Path(mock_write_lang_files.call_args_list[0][0][0]).as_posix()
+            )
+            assert snapshot("no_args.json") == mock_write_lang_files.call_args_list[0][0][1]
 
-        # Not prefixed
-        assert mock_write_lang_files.call_args_list[0][0][0] == Path(src)
-        assert mock_write_lang_files.call_args_list[0][0][1] == expected
+            mock_write_lang_files.reset_mock()
 
-        # Prefixed
-        assert mock_write_lang_files.call_args_list[1][0][0] == Path(src)
-        assert mock_write_lang_files.call_args_list[1][0][1] == expected_prefixed
+            # Prefixed
+            runner.invoke(
+                cli.app, ["tests/cli/examples/" + directory, "-p"], catch_exceptions=False
+            )
+            assert mock_write_lang_files.call_count == 1
+            assert (
+                snapshot("dest.txt")
+                == Path(mock_write_lang_files.call_args_list[0][0][0]).as_posix()
+            )
+            assert snapshot("prefixed.json") == mock_write_lang_files.call_args_list[0][0][1]
 
+    def test_file(self, runner: CliRunner):
+        """ Source arg is a file. E.g. `babelbox test.csv` """
 
-def test_src_is_file(runner: CliRunner):
-    with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:
-        runner.invoke(cli.app, "tests/cli/test_dirs/tree/a.csv", catch_exceptions=False)
-
-        assert mock_write.call_count == 1
-        assert mock_write.call_args_list[0][0][0] == Path("tests/cli/test_dirs/tree")
-        assert mock_write.call_args_list[0][0][1] == {
-            "a": {"x": "1", "y": "10"},
-            "b": {"x": "2", "y": "11"},
-            "c": {"x": "3", "y": "12"},
-        }
-
-
-def test_dry(runner: CliRunner):
-    with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:
-        with patch("pathlib.Path.mkdir", new=MagicMock()) as mock_mkdir:
-            runner.invoke(cli.app, ["tests/cli/test_dirs", "--dry"], catch_exceptions=False)
-
-            mock_write.assert_not_called()
-            mock_mkdir.assert_not_called()
-
-
-def test_multiple_sources(runner: CliRunner):
-    with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:
-        with patch("pathlib.Path.mkdir", new=MagicMock()) as mock_mkdir:
-            args = [
-                "tests/cli/test_dirs/multiple_sources/a.csv",
-                "tests/cli/test_dirs/multiple_sources/sourcedir",
-                "-o",
-                "build",
-            ]
-            runner.invoke(cli.app, args, catch_exceptions=False)
-
-            mock_mkdir.assert_called_once()
+        with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:
+            runner.invoke(
+                cli.app, "tests/cli/examples/multiple_csv/a.csv", catch_exceptions=False
+            )
 
             assert mock_write.call_count == 1
-            assert mock_write.call_args_list[0][0][0] == Path("build")
+            assert mock_write.call_args_list[0][0][0] == Path(
+                "tests/cli/examples/multiple_csv"
+            )
             assert mock_write.call_args_list[0][0][1] == {
                 "a": {"x": "1", "y": "10"},
-                "b": {"x": "1", "y": "10"},
-                "c": {"x": "1", "y": "10"},
+                "b": {"x": "2", "y": "11"},
+                "c": {"x": "3", "y": "12"},
             }
 
+    def test_multiple(self, snapshot: SnapshotFixture, runner: CliRunner):
+        """ Multiple sources. E.g. `babelbox file.csv dir/ -o <dir>` """
 
-def test_multiple_sources_no_out(runner: CliRunner):
+        with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:
+            with patch("pathlib.Path.mkdir", new=MagicMock()) as mock_mkdir:
+                args = [
+                    "tests/cli/examples/tree/a.csv",
+                    "tests/cli/examples/tree/node",
+                    "-o",
+                    "build",
+                ]
+                runner.invoke(cli.app, args, catch_exceptions=False)
+
+                mock_mkdir.assert_called_once()
+
+                assert mock_write.call_count == 1
+                assert mock_write.call_args_list[0][0][0] == Path("build")
+                assert snapshot("languages.json") == mock_write.call_args_list[0][0][1]
+
+    def test_multiple_without_out(self, runner: CliRunner):
+        """ Multiple sources but no --out option. E.g. E.g. `babelbox file.csv dir/` """
+
+        with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:
+            with patch("pathlib.Path.mkdir", new=MagicMock()) as mock_mkdir:
+                args = [
+                    "tests/cli/examples/tree/a.csv",
+                    "tests/cli/examples/tree/node",
+                ]
+                results = runner.invoke(cli.app, args, catch_exceptions=False)
+
+                mock_mkdir.assert_not_called()
+                mock_write.assert_not_called()
+
+                assert results.exit_code == 1
+                assert results.stdout == "Multiple sources but no output specified\n"
+
+
+def test_option_dry(runner: CliRunner):
     with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:
         with patch("pathlib.Path.mkdir", new=MagicMock()) as mock_mkdir:
-            args = [
-                "tests/cli/test_dirs/multiple_sources/a.csv",
-                "tests/cli/test_dirs/multiple_sources/sourcedir",
-            ]
-            results = runner.invoke(cli.app, args, catch_exceptions=False)
+            runner.invoke(cli.app, ["tests/cli/examples", "--dry"], catch_exceptions=False)
 
-            mock_mkdir.assert_not_called()
             mock_write.assert_not_called()
-
-            assert results.exit_code == 1
-            assert results.stdout == "Multiple sources but no output specified\n"
+            mock_mkdir.assert_not_called()
 
 
-class Test_csv_dialect_overwrites:
-    def test_overwrites_are_passed_to_load(self, runner: CliRunner):
+class Test_csv_dialect_options:
+    @pytest.mark.parametrize(
+        "options, expected",
+        [
+            (("-d", "|"), {"delimiter": "|"}),
+            (("--delimiter", "|"), {"delimiter": "|"}),
+            (("--quotechar", '"'), {"quotechar": '"'}),
+            (("--quotechar", "'"), {"quotechar": "'"}),
+        ],
+    )
+    def test_pass_overwrites_to_load(self, options, expected, runner: CliRunner):
+        """ Check if the correct csv overwrites are passed to `babelbox.parser.load_languages_from_csv`"""
+
         with patch("babelbox.parser.load_languages_from_csv") as mock_load_csv:
-            runner.invoke(
+            result = runner.invoke(
                 cli.app,
-                [
-                    "tests/cli/test_dirs/csv_dialect_overwrites/delimiter.csv",
-                    "--dry",
-                    "-d",
-                    "|",
-                ],
+                ["tests/cli/examples/multiple_csv/a.csv", "--dry", *options],
                 catch_exceptions=False,
             )
 
             mock_load_csv.assert_called_once()
-            assert mock_load_csv.call_args_list[0][0][2] == {"delimiter": "|"}
+            assert mock_load_csv.call_args_list[0][1]["dialect_overwrites"] == expected
 
     def test_delimiter(self, runner: CliRunner):
         with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:
             runner.invoke(
                 cli.app,
-                ["tests/cli/test_dirs/csv_dialect_overwrites/delimiter.csv", "-d", "|"],
+                ["tests/cli/examples/custom_dialects/pipe.csv", "-d", "|"],
+                catch_exceptions=False,
+            )
+
+            assert mock_write.call_count == 1
+            assert mock_write.call_args_list[0][0][1] == {
+                "a": {"x": "1", "y": "3"},
+                "b": {"x": "2", "y": "4"},
+            }
+
+    def test_pass_dialect_and_delimiter(self, runner: CliRunner):
+        with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:
+            runner.invoke(
+                cli.app,
+                [
+                    "tests/cli/examples/custom_dialects/pipe.csv",
+                    "--dialect",
+                    "excel",
+                    "-d",
+                    "|",
+                ],
                 catch_exceptions=False,
             )
 
@@ -167,7 +182,7 @@ class Test_logging:
     def test_default_loglevel(self, runner: CliRunner):
         with patch("logging.basicConfig") as mock_logconfig:
             runner.invoke(
-                cli.app, ["tests/cli/test_dirs/multiple_csv", "--dry"], catch_exceptions=False
+                cli.app, ["tests/cli/examples/multiple_csv", "--dry"], catch_exceptions=False
             )
 
             mock_logconfig.assert_called_once()
@@ -177,7 +192,7 @@ class Test_logging:
         with patch("logging.basicConfig") as mock_logconfig:
             runner.invoke(
                 cli.app,
-                ["tests/cli/test_dirs/multiple_csv", "--quiet", "--dry"],
+                ["tests/cli/examples/multiple_csv", "--quiet", "--dry"],
                 catch_exceptions=False,
             )
 
@@ -188,7 +203,7 @@ class Test_logging:
         with patch("logging.basicConfig") as mock_logconfig:
             runner.invoke(
                 cli.app,
-                ["tests/cli/test_dirs/multiple_csv", "--verbose", "--dry"],
+                ["tests/cli/examples/multiple_csv", "--verbose", "--dry"],
                 catch_exceptions=False,
             )
 

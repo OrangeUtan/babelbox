@@ -7,6 +7,8 @@ repos:
     hooks:
     - id: check-yaml
     - id: end-of-file-fixer
+      exclude: "snapshots"
+      exclude_types: ["csv"]
     - id: trailing-whitespace
 
   - repo: https://github.com/pre-commit/mirrors-mypy
@@ -14,15 +16,13 @@ repos:
     hooks:
       - id: mypy
 
-  - repo: local
+  - repo: https://github.com/psf/black
+    rev: 20.8b1
+    hooks:
+      - id: black
+        language_version: python3
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.7.0
     hooks:
       - id: isort
-        name: isort
-        entry: poetry run isort --settings-path pyproject.toml --profile black
-        types: [python]
-        language: system
-      - id: black
-        name: black
-        entry: poetry run black --config pyproject.toml
-        types: [python]
-        language: system

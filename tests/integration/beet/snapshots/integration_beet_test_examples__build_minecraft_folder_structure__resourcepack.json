@@ -1,0 +1,14 @@
+[
+  {
+    "minecraft:a": {
+      "some.prefix.x": "1",
+      "some.prefix.y": "3"
+    }
+  },
+  {
+    "minecraft:b": {
+      "some.prefix.x": "2",
+      "some.prefix.y": "4"
+    }
+  }
+]

@@ -42,14 +42,18 @@ All options:
 ```shell
 $ babelbox SOURCES...
     -o, --out                   The output directory of the generated files
-    -d, --delimiter             CSV delimiter
-    -i, --indent                Indentation used when generating files
-    -m, --minify                Minify generated files
     -p, --prefix-identifiers    Prefix identifiers with their path relative
                                 to their SOURCES entry
+    --dialect [excel|excel-tab|unix]
+                                CSV dialect used to parse CSV. Dialect will
+                                be automatically detected of omitted
+    -d, --delimiter             CSV delimiter overwrite
+    --quotechar                 CSV quote char overwrite
+    -m, --minify                Minify generated files
+    -i, --indent                Indentation used when generating files
+    --dry                       Dry run. Don not generate any files
     -v, --verbose               Increase verbosity
     -q, --quiet                 Only output errors
-    --dry                       Dry run. Don't generate any files
 ```
 
 

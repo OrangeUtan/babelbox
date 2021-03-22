@@ -220,6 +220,16 @@ class Test_parsing:
                 "b": {"x": "2", "# A Comment": ""},
             }
 
+    def test_enswith_newlines(self):
+        languages = babelbox.load_languages_from_csv(
+            "tests/parser/examples/ends_with_newlines.csv",
+            dialect_overwrites={"delimiter": ","},
+        )
+        assert languages == {
+            "a": {"x": "1", "y": "3"},
+            "b": {"x": "2", "y": "4"},
+        }
+
 
 class Test_prefix:
     def test(self):
@@ -310,24 +320,36 @@ class Test_dialect:
             )
             assert languages == expected
 
+    def test_overwrite_quotechar(self):
+        data = """,a,b
+                x,"a,b,c,d,e",2
+                y,3,4"""
+        quotechar = '"'
+
+        with patch("builtins.open", mock_open(read_data=inspect.cleandoc(data))):
+            languages = babelbox.load_languages_from_csv(
+                "test.csv", dialect_overwrites={"quotechar": quotechar}
+            )
+            assert languages == {"a": {"x": "a,b,c,d,e", "y": "3"}, "b": {"x": "2", "y": "4"}}
+
 
 class Test_load_file:
     def test_pathlib_path(self):
-        languages = babelbox.load_languages_from_csv(Path("tests/parser/res/a.csv"))
+        languages = babelbox.load_languages_from_csv(Path("tests/parser/examples/misc/a.csv"))
         assert languages == {"a": {"x": "1", "y": "3"}, "b": {"x": "2", "y": "4"}}
 
     def test_string_path(self):
-        languages = babelbox.load_languages_from_csv("tests/parser/res/a.csv")
+        languages = babelbox.load_languages_from_csv("tests/parser/examples/misc/a.csv")
         assert languages == {"a": {"x": "1", "y": "3"}, "b": {"x": "2", "y": "4"}}
 
     def test_unicode(self):
-        languages = babelbox.load_languages_from_csv("tests/parser/res/unicode.csv")
+        languages = babelbox.load_languages_from_csv("tests/parser/examples/misc/unicode.csv")
         assert languages == {"a": {"k": "ඣ", "l": "3"}, "b": {"k": "2", "l": "ผ"}}
 
     def test_missing_translation(self, caplog: LogCaptureFixture):
         with caplog.at_level(logging.WARNING):
             languages = babelbox.load_languages_from_csv(
-                "tests/parser/res/missing_translations.csv"
+                "tests/parser/examples/misc/missing_translations.csv"
             )
             assert languages == {
                 "en_us": {"cat": "Cat", "spoon": ""},
@@ -339,6 +361,6 @@ class Test_load_file:
                 assert name == "babelbox.parser"
                 assert level == logging.WARNING
                 assert match(
-                    "'tests/parser/res/missing_translations.csv': Locale '.*' has no translation for '.*'",
+                    "'tests/parser/examples/misc/missing_translations.csv': Locale '.*' has no translation for '.*'",
                     msg,
                 )
