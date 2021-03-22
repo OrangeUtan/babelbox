@@ -1,3 +1,4 @@
+import enum
 import logging
 from pathlib import Path
 from typing import List, Optional
@@ -7,6 +8,12 @@ import typer
 import babelbox
 
 from .parser import load_languages, merge_languages, write_language_files
+
+
+class CSVDialect(enum.Enum):
+    EXCEL = "excel"
+    EXCEL_TAB = "excel-tab"
+    UNIX = "unix"
 
 
 def version_callback(value: bool):
@@ -31,16 +38,6 @@ def main(
         file_okay=False,
         writable=True,
     ),
-    delimiter: Optional[str] = typer.Option(None, "-d", "--delimiter", help="CSV delimiter"),
-    quotechar: Optional[str] = typer.Option(
-        None, "--quotechar", help="Char used for quoting in CSV"
-    ),
-    indent: str = typer.Option(
-        "\t", "--indent", "-i", help="Indentation used when generating files"
-    ),
-    minify: bool = typer.Option(
-        False, "--minify", "-m", is_flag=True, flag_value=True, help="Minify generated files"
-    ),
     prefix_identifiers: bool = typer.Option(
         False,
         "--prefix-identifiers",
@@ -48,14 +45,31 @@ def main(
         is_flag=True,
         help="Prefix identifiers with their path relative to their SOURCES entry",
     ),
+    dialect: Optional[CSVDialect] = typer.Option(
+        None,
+        "--dialect",
+        help="CSV dialect used to parse CSV. Dialect will be automatically detected of omitted",
+    ),
+    delimiter: Optional[str] = typer.Option(
+        None, "-d", "--delimiter", help="CSV delimiter overwrite"
+    ),
+    quotechar: Optional[str] = typer.Option(
+        None, "--quotechar", help="CSV quote char overwrite"
+    ),
+    minify: bool = typer.Option(
+        False, "--minify", "-m", is_flag=True, flag_value=True, help="Minify generated files"
+    ),
+    indent: str = typer.Option(
+        "\t", "--indent", "-i", help="Indentation used when generating files"
+    ),
+    dry: bool = typer.Option(
+        False, "--dry", help="Dry run. Don't generate any files", is_flag=True
+    ),
     verbose: bool = typer.Option(
         False, "-v", "--verbose", is_flag=True, help="Increase verbosity"
     ),
     quiet: bool = typer.Option(
         False, "-q", "--quiet", is_flag=True, help="Only output errors"
-    ),
-    dry: bool = typer.Option(
-        False, "--dry", help="Dry run. Don't generate any files", is_flag=True
     ),
     version: bool = typer.Option(None, "--version", callback=version_callback, is_eager=True),
 ):
@@ -91,7 +105,12 @@ def main(
 
     languages = merge_languages(
         map(
-            lambda src: load_languages(src, prefix_identifiers, csv_dialect_overwrites),
+            lambda src: load_languages(
+                src,
+                prefix_identifiers,
+                dialect=dialect.value if dialect else None,
+                csv_dialect_overwrites=csv_dialect_overwrites,
+            ),
             sources,
         )
     )

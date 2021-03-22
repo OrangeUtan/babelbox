@@ -38,6 +38,7 @@ def write_language_files(
 def load_languages(
     src: Union[str, os.PathLike],
     prefix_identifiers=False,
+    dialect: Optional[DialectLike] = None,
     csv_dialect_overwrites: Optional[dict] = None,
 ):
     """ Loads languages from directory """
@@ -56,7 +57,11 @@ def load_languages(
         prefix = utils.relative_path_to(f, src) + "." if prefix_identifiers else ""
 
         if f.suffix == ".csv":
-            file_languages.append(load_languages_from_csv(f, prefix, csv_dialect_overwrites))
+            file_languages.append(
+                load_languages_from_csv(
+                    f, prefix, dialect=dialect, dialect_overwrites=csv_dialect_overwrites
+                )
+            )
 
     return merge_languages(file_languages)
 
@@ -72,7 +77,10 @@ def merge_languages(language_collections: Iterable[dict[str, dict[str, str]]]):
 
 
 def load_languages_from_csv(
-    path: Union[str, os.PathLike], prefix: str = "", dialect_overwrites: Optional[dict] = None
+    path: Union[str, os.PathLike],
+    prefix: str = "",
+    dialect: Optional[DialectLike] = None,
+    dialect_overwrites: Optional[dict] = None,
 ):
     """
     Loads csv file and parses it to a dictionary mapping each column to a language code.
@@ -85,12 +93,14 @@ def load_languages_from_csv(
     """
 
     with open(path, newline="", encoding="utf8") as csv_file:
-        try:
-            dialect = csv.Sniffer().sniff(csv_file.read(1024))
-        except Exception:
-            dialect = csv.excel
-        finally:
-            csv_file.seek(0)
+
+        if dialect is None:
+            try:
+                dialect = csv.Sniffer().sniff(csv_file.read(1024))
+            except Exception:
+                dialect = csv.excel
+            finally:
+                csv_file.seek(0)
 
         reader = csv.DictReader(csv_file, dialect=dialect, **(dialect_overwrites or {}))
         indentifier_column, *language_codes = reader.fieldnames or [""]
