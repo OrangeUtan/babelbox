@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0] - 2021-03-22
+### Feature
+- [`beet`](https://github.com/mcbeet/beet) plugin integration
+- `--delimiter` option
+- `--quotechar` option
+- `--dialect` option
+
 ## [2.0.0] - 2021-03-20
 ### Feature
 - `--quiet` flag
