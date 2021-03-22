@@ -5,7 +5,7 @@
 ![](https://img.shields.io/badge/mypy-checked-green)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 ![](https://img.shields.io/badge/pre--commit-enabled-green)
-![](https://github.com/orangeutan/babelbox/workflows/ci/badge.svg)
+![](https://github.com/orangeutan/babelbox/workflows/CI/badge.svg)
 
 # Babelbox
 Babelbox allows you to write your language files in .csv files and then generate Minecraft language.json files from them.<br>
