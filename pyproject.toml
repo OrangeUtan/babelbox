@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "babelbox"
-version = "2.0.0"
+version = "2.1.0"
 description = "A language localization generator for Minecraft"
 authors = ["Oran9eUtan <Oran9eUtan@gmail.com>"]
 license = "MIT"

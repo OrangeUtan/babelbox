@@ -1,7 +1,7 @@
 github_url = "https://github.com/orangeutan/babelbox/"
 
 [version]
-current = "2.0.0"
+current = "2.1.0"
 
 regex = '''
   (?P<major>\d+)
