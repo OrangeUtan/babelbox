@@ -319,6 +319,18 @@ class Test_dialect:
             )
             assert languages == expected
 
+    def test_overwrite_quotechar(self):
+        data = """,a,b
+                x,"a,b,c,d,e",2
+                y,3,4"""
+        quotechar = '"'
+
+        with patch("builtins.open", mock_open(read_data=inspect.cleandoc(data))):
+            languages = babelbox.load_languages_from_csv(
+                "test.csv", dialect_overwrites={"quotechar": quotechar}
+            )
+            assert languages == {"a": {"x": "a,b,c,d,e", "y": "3"}, "b": {"x": "2", "y": "4"}}
+
 
 class Test_load_file:
     def test_pathlib_path(self):

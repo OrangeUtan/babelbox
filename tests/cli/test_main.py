@@ -121,23 +121,27 @@ def test_option_dry(runner: CliRunner):
 
 
 class Test_csv_dialect_options:
-    def test_pass_overwrites_to_load(self, runner: CliRunner):
-        """ Check if the csv overwrites are passed to `babelbox.parser.load_languages_from_csv`"""
+    @pytest.mark.parametrize(
+        "options, expected",
+        [
+            (("-d", "|"), {"delimiter": "|"}),
+            (("--delimiter", "|"), {"delimiter": "|"}),
+            (("--quotechar", '"'), {"quotechar": '"'}),
+            (("--quotechar", "'"), {"quotechar": "'"}),
+        ],
+    )
+    def test_pass_overwrites_to_load(self, options, expected, runner: CliRunner):
+        """ Check if the correct csv overwrites are passed to `babelbox.parser.load_languages_from_csv`"""
 
         with patch("babelbox.parser.load_languages_from_csv") as mock_load_csv:
             runner.invoke(
                 cli.app,
-                [
-                    "tests/cli/examples/multiple_csv/a.csv",
-                    "--dry",
-                    "-d",
-                    "|",
-                ],
+                ["tests/cli/examples/multiple_csv/a.csv", "--dry", *options],
                 catch_exceptions=False,
             )
 
             mock_load_csv.assert_called_once()
-            assert mock_load_csv.call_args_list[0][0][2] == {"delimiter": "|"}
+            assert mock_load_csv.call_args_list[0][0][2] == expected
 
     def test_delimiter(self, runner: CliRunner):
         with patch("babelbox.cli.write_language_files", new=MagicMock()) as mock_write:

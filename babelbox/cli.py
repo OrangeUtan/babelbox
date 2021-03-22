@@ -32,6 +32,9 @@ def main(
         writable=True,
     ),
     delimiter: Optional[str] = typer.Option(None, "-d", "--delimiter", help="CSV delimiter"),
+    quotechar: Optional[str] = typer.Option(
+        None, "--quotechar", help="Char used for quoting in CSV"
+    ),
     indent: str = typer.Option(
         "\t", "--indent", "-i", help="Indentation used when generating files"
     ),
@@ -83,6 +86,8 @@ def main(
     csv_dialect_overwrites = {}
     if delimiter:
         csv_dialect_overwrites["delimiter"] = delimiter
+    if quotechar:
+        csv_dialect_overwrites["quotechar"] = quotechar
 
     languages = merge_languages(
         map(
