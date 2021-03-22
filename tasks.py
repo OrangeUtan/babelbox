@@ -17,17 +17,6 @@ def install(c):
 
 
 @task
-def format(c):
-    """ Format all files  in project using black and isort"""
-
-    os.system("poetry run black . --config pyproject.toml")
-    os.system(
-        f"poetry run isort {str(SRC_DIR)} --settings-path pyproject.toml --profile black"
-    )
-    os.system("poetry run isort tests --settings-path pyproject.toml --profile black")
-
-
-@task
 def test(c, verbose=False, s=False):
     """ Run all tests with coverage """
 
