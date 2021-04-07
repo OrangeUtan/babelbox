@@ -13,7 +13,7 @@ def install(c):
 
     os.system("poetry lock -n")
     os.system("poetry install -n")
-    os.system("poetry run pre-commit install")
+    os.system("pre-commit install --install-hooks")
 
 
 @task
