@@ -1,8 +1,6 @@
 from typing import Iterable, Optional
 
-from beet import Context
-from beet.library.resource_pack import Language
-from beet.toolchain.context import Plugin
+from beet import Context, Language, Plugin
 
 import babelbox
 
