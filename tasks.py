@@ -17,6 +17,15 @@ def install(c):
 
 
 @task
+def format(c):
+    os.system("poetry run black . --config pyproject.toml")
+    os.system(
+        f"poetry run isort {str(SRC_DIR)} --settings-path pyproject.toml --profile black"
+    )
+    os.system("poetry run isort tests --settings-path pyproject.toml --profile black")
+
+
+@task
 def test(c, verbose=False, s=False):
     """ Run all tests with coverage """
 
@@ -24,18 +33,3 @@ def test(c, verbose=False, s=False):
     if os.system(f"poetry run pytest --cov={str(SRC_DIR)} --cov-report=xml {flags}") == 0:
         os.system("poetry run coverage report")
         os.system("poetry run coverage-badge -o coverage.svg -f")
-
-
-@task
-def publish(c):
-    """ Publish project from local """
-
-    os.system("poetry build")
-    os.system("poetry publish")
-
-
-@task
-def bump(c, version):
-    """ Bump version and push tag to remote. Autmatically published project """
-
-    os.system(f"poetry run tbump {version}")
