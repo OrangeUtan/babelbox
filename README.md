@@ -11,7 +11,6 @@
 Babelbox allows you to write your language files in .csv files and then generate Minecraft language.json files from them.<br>
 Creating translations in CSV gives you an easy overview over any errors or missing translations.<br>
 
-# Table of contents
 - [Installation](#Installation)
 - [Usage](#Usage)
 - [Getting started](#Getting-started)
@@ -282,18 +281,12 @@ build
 ```
 
 # Contributing
-Contributions are welcome. Make sure to first open an issue discussing the problem or the new feature before creating a pull request. The project uses [`poetry`](https://python-poetry.org/). Setup automatically with [`invoke`](http://www.pyinvoke.org/) or manualy with poetry:
+Contributions are welcome. Make sure to first open an issue discussing the problem or the new feature before creating a pull request. The project uses [`poetry`](https://python-poetry.org/). Setup dev environment with [`invoke`](http://www.pyinvoke.org/):
 ```shell
-$ # Either
 $ invoke install
-$ # or
-$ poetry install
 ```
-You can run test with pytest:
+Run tests:
 ```shell
-$ poetry run pytest
+$ invoke test
 ```
-The project follows [`black`](https://github.com/psf/black) codestyle. Import statements are sorted with [`isort`](https://pycqa.github.io/isort/). Code formatting and type checking is enforced using [`pre-commit`](https://pre-commit.com/).
-```shell
-$ pre-commit install
-```
+The project follows [`black`](https://github.com/psf/black) codestyle. Import statements are sorted with [`isort`](https://pycqa.github.io/isort/). Code formatting and type checking is enforced using [`pre-commit`](https://pre-commit.com/)
