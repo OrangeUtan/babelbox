@@ -19,6 +19,12 @@ repos:
       - id: mypy
         stages: ["push"]
 
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v2.17.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+
   - repo: local
     hooks:
       - id: isort
