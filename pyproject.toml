@@ -25,11 +25,11 @@ hypothesis = "^6.3.4"
 pytest-cov = "^2.11.1"
 coverage-badge = "^1.0.1"
 pre-commit = "^2.10.1"
-tbump = "^6.3.1"
 invoke = "^1.5.0"
 rope = "^0.18.0"
 beet = "^0.16.0"
 pytest-insta = "^0.1.7"
+python-semantic-release = "^7.15.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -46,3 +46,10 @@ line_length = 95
 [tool.coverage.run]
 source = ["babelbox"]
 omit = ["babelbox/__main__.py"]
+
+[tool.semantic_release]
+branch="release"
+version_toml = "pyproject.toml:tool.poetry.version"
+version_variable = ["babelbox/__init__.py:__version__"]
+major_on_zero = false
+build_command = "poetry build"
