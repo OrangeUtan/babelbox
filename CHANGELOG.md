@@ -2,6 +2,13 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.1 (2021-04-07)
+### Fix
+* Fix invalid imports from beet ([`7841a48`](https://github.com/OrangeUtan/babelbox/commit/7841a483f5b6a0972e2d9a7196d734413b7d1f24))
+
+### Documentation
+* Update README ([`4d64001`](https://github.com/OrangeUtan/babelbox/commit/4d640017a18169b17871a7abd8fbb05576db7628))
+
 ## v2.1.0 (2021-03-22)
 ### Feature
 - [`beet`](https://github.com/mcbeet/beet) plugin integration
