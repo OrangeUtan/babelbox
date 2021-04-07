@@ -13,7 +13,9 @@ def install(c):
 
     os.system("poetry lock -n")
     os.system("poetry install -n")
-    os.system("pre-commit install --install-hooks")
+    os.system("poetry run pre-commit install --hook-type pre-commit")
+    os.system("poetry run pre-commit install --hook-type pre-push")
+    os.system("poetry run pre-commit install --hook-type commit-msg")
 
 
 @task
