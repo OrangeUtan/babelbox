@@ -17,11 +17,14 @@ def beet_default(ctx: Context):
     prefix_identifiers = config.get("prefix_identifiers")
     dialect = config.get("dialect")
 
-    ctx.require(create_babelbox_plugin(load, csv_dialect_overwrites, prefix_identifiers))
+    ctx.require(
+        create_babelbox_plugin(load, dialect, csv_dialect_overwrites, prefix_identifiers)
+    )
 
 
 def create_babelbox_plugin(
     load: Iterable[str] = (),
+    dialect: Optional[str] = None,
     csv_dialect_overwrites: Optional[dict] = None,
     prefix_identifiers: bool = False,
 ) -> Plugin:
@@ -33,7 +36,7 @@ def create_babelbox_plugin(
                 languages = babelbox.load_languages(
                     path,
                     prefix_identifiers,
-                    dialect=None,
+                    dialect,
                     csv_dialect_overwrites=csv_dialect_overwrites,
                 )
 
