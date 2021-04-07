@@ -2,6 +2,10 @@
 
 <!--next-version-placeholder-->
 
+## v2.1.2 (2021-04-07)
+### Fix
+* Beet plugin ignored dialect configuration ([`1958900`](https://github.com/OrangeUtan/babelbox/commit/19589004e02312ed4fea17f8d0c78a7ac17e8729))
+
 ## v2.1.1 (2021-04-07)
 ### Fix
 * Fix invalid imports from beet ([`7841a48`](https://github.com/OrangeUtan/babelbox/commit/7841a483f5b6a0972e2d9a7196d734413b7d1f24))
